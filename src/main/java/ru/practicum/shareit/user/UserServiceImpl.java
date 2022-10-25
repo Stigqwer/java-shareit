@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     private final UserStorage userStorage;
     private static long id = 0;
 
@@ -28,16 +28,16 @@ public class UserServiceImpl implements UserService{
     @Override
     public User createUser(UserDto userDto) {
         validateEmail(userDto.getEmail());
-        return userStorage.createUser(UserMapper.toUser(++id,userDto));
+        return userStorage.createUser(UserMapper.toUser(++id, userDto));
     }
 
     @Override
     public User patchUser(long id, UserDto userDto) {
         User user = findUserById(id);
-        if(userDto.getName() != null){
+        if (userDto.getName() != null) {
             user.setName(userDto.getName());
         }
-        if(userDto.getEmail() != null) {
+        if (userDto.getEmail() != null) {
             validateEmail(userDto.getEmail());
             user.setEmail(userDto.getEmail());
         }
@@ -51,10 +51,10 @@ public class UserServiceImpl implements UserService{
         userStorage.deleteUser(id);
     }
 
-    private void validateEmail(String email){
+    private void validateEmail(String email) {
         List<String> emails = userStorage.findAllUser().stream().map(User::getEmail).collect(Collectors.toList());
-        if(emails.contains(email)){
-            throw  new UserValidationException(String.format("%s уже существует", email));
+        if (emails.contains(email)) {
+            throw new UserValidationException(String.format("%s уже существует", email));
         }
     }
 }

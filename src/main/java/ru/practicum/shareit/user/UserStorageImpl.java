@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Component
-public class UserStorageImpl implements UserStorage{
+public class UserStorageImpl implements UserStorage {
     private final HashMap<Long, User> users = new HashMap<>();
 
     @Override
@@ -17,7 +17,7 @@ public class UserStorageImpl implements UserStorage{
 
     @Override
     public User findUserById(long userId) {
-        if(users.containsKey(userId)) {
+        if (users.containsKey(userId)) {
             return users.get(userId);
         } else {
             throw new UserNotFoundException(String.format("Пользователь с id %d не найден", userId));
@@ -26,7 +26,7 @@ public class UserStorageImpl implements UserStorage{
 
     @Override
     public User createUser(User user) {
-        users.put(user.getId(),user);
+        users.put(user.getId(), user);
         return users.get(user.getId());
     }
 
@@ -38,7 +38,7 @@ public class UserStorageImpl implements UserStorage{
 
     @Override
     public void deleteUser(long userId) {
-        if(users.containsKey(userId)){
+        if (users.containsKey(userId)) {
             users.remove(userId);
         } else {
             throw new UserNotFoundException(String.format("Пользователь с id %d не найден", userId));
