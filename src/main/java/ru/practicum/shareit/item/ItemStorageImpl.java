@@ -5,11 +5,12 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
 public class ItemStorageImpl implements ItemStorage {
-    private final HashMap<Long, Item> items = new HashMap<>();
+    private final Map<Long, Item> items = new HashMap<>();
 
     @Override
     public List<Item> findAllItem(long userId) {
@@ -41,8 +42,16 @@ public class ItemStorageImpl implements ItemStorage {
     public List<Item> searchItem(String text) {
         return items.values().stream()
                 .filter(x -> x.isAvailable() &&
-                        (x.getName().toLowerCase().contains(text.toLowerCase()) ||
-                                x.getDescription().toLowerCase().contains(text.toLowerCase())) && !text.isEmpty())
+                        (isContainsTextOnName(x.getName(), text) ||
+                                isContainsTextOnDescription(x.getDescription(), text)) && !text.isEmpty())
                 .collect(Collectors.toList());
+    }
+
+    private boolean isContainsTextOnName(String name, String text) {
+        return name.toLowerCase().contains(text.toLowerCase());
+    }
+
+    private boolean isContainsTextOnDescription(String description, String text) {
+        return description.toLowerCase().contains(text.toLowerCase());
     }
 }

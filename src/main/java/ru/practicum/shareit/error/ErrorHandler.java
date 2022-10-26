@@ -1,4 +1,4 @@
-package ru.practicum.shareit;
+package ru.practicum.shareit.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -31,4 +31,5 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
+    //не валидные данные обрабатывает spring
 }

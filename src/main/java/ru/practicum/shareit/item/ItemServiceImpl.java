@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -8,16 +9,13 @@ import ru.practicum.shareit.user.UserService;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final ItemStorage itemStorage;
 
-    private static long id = 0;
+    private long id = 0;
 
-    public ItemServiceImpl(UserService userService, ItemStorage itemStorage) {
-        this.userService = userService;
-        this.itemStorage = itemStorage;
-    }
 
     @Override
     public List<Item> findAllItem(long userId) {

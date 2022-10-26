@@ -5,10 +5,11 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class UserStorageImpl implements UserStorage {
-    private final HashMap<Long, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
 
     @Override
     public List<User> findAllUser() {

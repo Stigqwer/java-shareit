@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -13,12 +14,9 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/items")
+@AllArgsConstructor
 public class ItemController {
     private final ItemService itemService;
-
-    public ItemController(ItemService itemService) {
-        this.itemService = itemService;
-    }
 
     @GetMapping
     public List<Item> findAllItem(@RequestHeader("X-Sharer-User-Id") @NotEmpty long userId) {

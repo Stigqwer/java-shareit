@@ -1,19 +1,16 @@
 package ru.practicum.shareit.user;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserStorage userStorage;
-    private static long id = 0;
-
-    public UserServiceImpl(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
+    private long id = 0;
 
     @Override
     public List<User> findAllUser() {
@@ -52,8 +49,8 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateEmail(String email) {
-        List<String> emails = userStorage.findAllUser().stream().map(User::getEmail).collect(Collectors.toList());
-        if (emails.contains(email)) {
+        boolean isRepeatEmail = userStorage.findAllUser().stream().map(User::getEmail).anyMatch(x -> x.equals(email));
+        if (isRepeatEmail) {
             throw new UserValidationException(String.format("%s уже существует", email));
         }
     }
