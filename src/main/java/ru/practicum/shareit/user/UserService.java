@@ -5,13 +5,13 @@ import ru.practicum.shareit.user.dto.UserDto;
 import java.util.List;
 
 public interface UserService {
-    List<User> findAllUser();
+    List<UserDto> findAllUser();
 
-    User findUserById(long userId);
+    UserDto findUserById(long userId);
 
-    User createUser(UserDto userDto);
+    UserDto createUser(UserDto userDto);
 
-    User patchUser(long id, UserDto userDto);
+    UserDto patchUser(long id, UserDto userDto);
 
     void deleteUser(long id);
 }

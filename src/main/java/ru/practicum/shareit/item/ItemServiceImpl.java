@@ -6,39 +6,48 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserService;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final UserService userService;
-    private final ItemStorage itemStorage;
-
-    private long id = 0;
-
+    private final ItemRepository itemRepository;
 
     @Override
-    public List<Item> findAllItem(long userId) {
+    public List<ItemDto> findAllItem(long userId) {
         userService.findUserById(userId);
-        return itemStorage.findAllItem(userId);
+        return itemRepository.findAllByOwnerId(userId).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 
     @Override
-    public Item findItemById(long userId, long itemId) {
+    public ItemDto findItemById(long userId, long itemId) {
         userService.findUserById(userId);
-        return itemStorage.findItemById(itemId);
+        Optional<Item> item = itemRepository.findById(itemId);
+        if(item.isPresent()){
+            return ItemMapper.toItemDto(item.get());
+        } else {
+            throw new ItemNotFoundException(String.format("Вещи с id %d не существует", itemId));
+        }
     }
 
     @Override
-    public Item createItem(long userId, ItemDto itemDto) {
+    public ItemDto createItem(long userId, ItemDto itemDto) {
         userService.findUserById(userId);
-        return itemStorage.createItem(ItemMapper.toItem(userId, ++id, itemDto));
+        return ItemMapper.toItemDto(itemRepository.save(ItemMapper.toItem(userId, itemDto)));
     }
 
     @Override
-    public Item patchItem(long userId, long itemId, ItemDto itemDto) {
+    public ItemDto patchItem(long userId, long itemId, ItemDto itemDto) {
         userService.findUserById(userId);
-        Item item = itemStorage.findItemById(itemId);
+        Optional<Item> itemOptional = itemRepository.findById(itemId);
+        if(itemOptional.isEmpty()){
+            throw new ItemNotFoundException(String.format("Вещи с id %d не существует", itemId));
+        }
+        Item item = itemOptional.get();
         if (item.getOwnerId() != userId) {
             throw new ItemNotFoundException(String.format("У пользователя с id %d нет вещи с id %d", userId, itemId));
         }
@@ -51,12 +60,16 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
         }
-        return itemStorage.patchItem(item);
+        return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
     @Override
-    public List<Item> searchItem(long userId, String text) {
+    public List<ItemDto> searchItem(long userId, String text) {
         userService.findUserById(userId);
-        return itemStorage.searchItem(text);
+        if(text.isEmpty()){
+            return Collections.emptyList();
+        } else {
+            return itemRepository.search(text).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+        }
     }
 }

@@ -17,22 +17,22 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<User> findAllUser() {
+    public List<UserDto> findAllUser() {
         return userService.findAllUser();
     }
 
     @GetMapping("/{userId}")
-    public User findUserById(@PathVariable long userId) {
+    public UserDto findUserById(@PathVariable long userId) {
         return userService.findUserById(userId);
     }
 
     @PostMapping
-    public User createUser(@RequestBody @Valid UserDto userDto) {
+    public UserDto createUser(@RequestBody @Valid UserDto userDto) {
         return userService.createUser(userDto);
     }
 
     @PatchMapping("/{userId}")
-    public User patchUser(@PathVariable long userId, @RequestBody UserDto userDto) {
+    public UserDto patchUser(@PathVariable long userId, @RequestBody UserDto userDto) {
         return userService.patchUser(userId, userDto);
     }
 
