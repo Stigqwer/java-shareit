@@ -14,11 +14,23 @@ import javax.validation.constraints.NotEmpty;
 @RequestMapping(path = "/bookings")
 @AllArgsConstructor
 public class BookingController {
-   private final BookingService bookingService;
+    private final BookingService bookingService;
 
-   @PostMapping
+    @PostMapping
     BookingDto createBooking(@RequestHeader("X-Sharer-User-Id") @NotEmpty long userId,
-                             @RequestBody @Valid Booking booking){
-       return bookingService.createBooking(userId, booking);
-   }
+                             @RequestBody @Valid Booking booking) {
+        return bookingService.createBooking(userId, booking);
+    }
+
+    @PatchMapping("/{bookingId}")
+    BookingDto patchBooking(@RequestHeader("X-Sharer-User-Id") @NotEmpty long userId,
+                            @PathVariable long bookingId, @RequestParam boolean approved) {
+        return bookingService.patchBooking(userId, bookingId, approved);
+    }
+
+    @GetMapping("/{bookingId}")
+    BookingDto findBookingById(@RequestHeader("X-Sharer-User-Id") @NotEmpty long userId,
+                               @PathVariable long bookingId){
+        return bookingService.findBookingById(userId,bookingId);
+    }
 }
