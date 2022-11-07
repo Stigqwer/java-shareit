@@ -7,8 +7,11 @@ import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.UserService;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -63,6 +66,49 @@ public class BookingServiceImpl implements BookingService {
             throw new BookingException(String.format
                     ("Пользователь с id %d не имеет отношения к этому бронированию", userId));
         }
+    }
+
+    @Override
+    public List<BookingDto> findAllBookingByUser(long bookerId, String state) {
+        userService.findUserById(bookerId);
+        List<Booking> bookingList;
+        switch (state) {
+            case "ALL":
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId);
+                break;
+            case "WAITING":
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId).stream().
+                        filter(booking -> booking.getStatus() == Status.WAITING).collect(Collectors.toList());
+                break;
+            case "REJECTED":
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId).stream().
+                        filter(booking -> booking.getStatus() == Status.REJECTED).collect(Collectors.toList());
+                break;
+            case "PAST":
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId).stream().
+                        filter(booking -> booking.getEnd().isBefore(LocalDateTime.now())).collect(Collectors.toList());
+                break;
+            case "FUTURE":
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId).stream().
+                        filter(booking -> booking.getStart().isAfter(LocalDateTime.now())).collect(Collectors.toList());
+                break;
+            case "CURRENT":
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId).stream().
+                        filter(booking -> booking.getStart().isBefore(LocalDateTime.now())
+                                && booking.getEnd().isAfter(LocalDateTime.now())).collect(Collectors.toList());
+                break;
+            default:
+                throw new BookingException(String.format("Unknown state: %s", state));
+        }
+        return bookingList.stream().map(booking -> BookingMapper.toBookingDto(booking,
+                userService.findUserById(bookerId),
+                itemService.findItemById(bookerId, booking.getItemId()))).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookingDto> findAllBookingByOwner(long ownerId, String state) {
+        userService.findUserById(ownerId);
+        return null;
     }
 
     private Booking findById(long bookingId) {
