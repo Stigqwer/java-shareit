@@ -26,7 +26,7 @@ public class BookingServiceImpl implements BookingService {
         ItemDto itemDto = itemService.findItemById(userId, booking.getItemId());
         boolean isUserItem = itemService.findAllItem(userId).stream()
                 .anyMatch(item -> Objects.equals(booking.getItemId(), item.getId()));
-        if(isUserItem) {
+        if (isUserItem) {
             throw new BookingNotFoundException("Вы являетесь владельцем данной вещи");
         }
         if (!itemDto.getAvailable()) {
@@ -42,7 +42,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto patchBooking(long userId, long bookingId, boolean approved) {
         Booking booking = findById(bookingId);
-        if(booking.getStatus().equals(Status.APPROVED) && approved){
+        if (booking.getStatus().equals(Status.APPROVED) && approved) {
             throw new BookingException("Статус бронирования уже подтвержден");
         }
         boolean isUserItem = itemService.findAllItem(userId).stream()

@@ -6,7 +6,7 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
-public interface ItemRepository extends JpaRepository<Item,Long> {
+public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findAllByOwnerId(Long id);
 
     @Query("select i from Item i where (LOWER(i.name) like LOWER(concat('%', ?1, '%'))" +

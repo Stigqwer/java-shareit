@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto findUserById(long userId) {
         Optional<User> user = userRepository.findById(userId);
-        if(user.isPresent()){
+        if (user.isPresent()) {
             return UserMapper.toUserDto(user.get());
         } else {
             throw new UserNotFoundException(String.format("Пользователь с id %d не найден", userId));

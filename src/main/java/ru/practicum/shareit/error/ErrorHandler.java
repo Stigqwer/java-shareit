@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.booking.BookingException;
 import ru.practicum.shareit.booking.BookingNotFoundException;
+import ru.practicum.shareit.item.CommentException;
 import ru.practicum.shareit.item.ItemNotFoundException;
 import ru.practicum.shareit.user.UserNotFoundException;
 import ru.practicum.shareit.user.UserValidationException;
@@ -35,13 +36,19 @@ public class ErrorHandler {
 
     @ExceptionHandler(BookingException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public  ErrorResponse handleBookingException(final BookingException e) {
+    public ErrorResponse handleBookingException(final BookingException e) {
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(BookingNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public  ErrorResponse handleBookingException(final BookingNotFoundException e) {
+    public ErrorResponse handleBookingException(final BookingNotFoundException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler(CommentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleCommentException(final CommentException e) {
         return new ErrorResponse(e.getMessage());
     }
 }

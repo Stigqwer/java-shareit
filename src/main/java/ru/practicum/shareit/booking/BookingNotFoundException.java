@@ -1,6 +1,6 @@
 package ru.practicum.shareit.booking;
 
-public class BookingNotFoundException extends RuntimeException{
+public class BookingNotFoundException extends RuntimeException {
     public BookingNotFoundException(String message) {
         super(message);
     }

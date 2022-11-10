@@ -31,19 +31,19 @@ public class BookingController {
 
     @GetMapping("/{bookingId}")
     BookingDto findBookingById(@RequestHeader("X-Sharer-User-Id") @NotEmpty long userId,
-                               @PathVariable long bookingId){
-        return bookingService.findBookingById(userId,bookingId);
+                               @PathVariable long bookingId) {
+        return bookingService.findBookingById(userId, bookingId);
     }
 
     @GetMapping
     List<BookingDto> findAllBookingByUser(@RequestHeader("X-Sharer-User-Id") @NotEmpty long userId,
-                                          @RequestParam(defaultValue = "ALL") String state){
+                                          @RequestParam(defaultValue = "ALL") String state) {
         return bookingService.findAllBookingByUser(userId, state);
     }
 
     @GetMapping("/owner")
     List<BookingDto> findAllBookingByOwner(@RequestHeader("X-Sharer-User-Id") @NotEmpty long userId,
-                                           @RequestParam(defaultValue = "ALL") String state){
+                                           @RequestParam(defaultValue = "ALL") String state) {
         return bookingService.findAllBookingByOwner(userId, state);
     }
 }

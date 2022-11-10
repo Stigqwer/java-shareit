@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.dto.BookingDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * TODO Sprint add-controllers.
@@ -25,4 +25,6 @@ public class ItemDto {
     private Boolean available;
     private Booking lastBooking;
     private Booking nextBooking;
+    private List<CommentDto> comments;
 }
+
