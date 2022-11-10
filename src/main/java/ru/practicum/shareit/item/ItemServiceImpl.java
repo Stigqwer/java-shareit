@@ -2,10 +2,15 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.BookingService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserService;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -14,21 +19,57 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
+    private final BookingRepository bookingRepository;
     private final UserService userService;
     private final ItemRepository itemRepository;
 
     @Override
     public List<ItemDto> findAllItem(long userId) {
         userService.findUserById(userId);
-        return itemRepository.findAllByOwnerId(userId).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+        List<Item> items = itemRepository.findAllByOwnerId(userId);
+        List<ItemDto> itemDtos = new ArrayList<>();
+        for (Item item: items) {
+            ItemDto itemDto = ItemMapper.toItemDto(item);
+            List<Booking> bookings = bookingRepository.findAllByItemIdOrderByStartDesc(item.getId());
+            if (bookings.size() != 0) {
+                addBooking(itemDto, bookings);
+            }
+            itemDtos.add(itemDto);
+        }
+        return itemDtos;
+    }
+
+    private void addBooking(ItemDto itemDto, List<Booking> bookings) {
+        List<Booking> lastBookings = bookings.stream()
+                .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
+                .collect(Collectors.toList());
+        if (lastBookings.size() != 0) {
+            itemDto.setLastBooking(lastBookings.get(lastBookings.size() - 1));
+        }
+        List<Booking> nextBookings = bookings.stream()
+                .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
+                .collect(Collectors.toList());
+        if (nextBookings.size() != 0) {
+            itemDto.setNextBooking(nextBookings.get(0));
+        }
     }
 
     @Override
     public ItemDto findItemById(long userId, long itemId) {
         userService.findUserById(userId);
-        Optional<Item> item = itemRepository.findById(itemId);
-        if(item.isPresent()){
-            return ItemMapper.toItemDto(item.get());
+        Optional<Item> optionalItem = itemRepository.findById(itemId);
+        if(optionalItem.isPresent()){
+            Item item = optionalItem.get();
+            if(item.getOwnerId().equals(userId)){
+                ItemDto itemDto = ItemMapper.toItemDto(item);
+               List<Booking> bookings = bookingRepository.findAllByItemIdOrderByStartDesc(itemId);
+               if (bookings.size() != 0) {
+                   addBooking(itemDto, bookings);
+               }
+                return itemDto;
+            } else{
+                return ItemMapper.toItemDto(item);
+            }
         } else {
             throw new ItemNotFoundException(String.format("Вещи с id %d не существует", itemId));
         }
