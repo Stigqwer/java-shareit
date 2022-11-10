@@ -72,8 +72,8 @@ public class BookingServiceImpl implements BookingService {
                     userService.findUserById(booking.getBookerId()),
                     itemService.findItemById(userId, booking.getItemId()));
         } else {
-            throw new BookingNotFoundException(String.format
-                    ("Пользователь с id %d не имеет отношения к этому бронированию", userId));
+            throw new BookingNotFoundException(String.format(
+                    "Пользователь с id %d не имеет отношения к этому бронированию", userId));
         }
     }
 
@@ -86,24 +86,25 @@ public class BookingServiceImpl implements BookingService {
                 bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId);
                 break;
             case "WAITING":
-                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId).stream().
-                        filter(booking -> booking.getStatus() == Status.WAITING).collect(Collectors.toList());
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId).stream()
+                        .filter(booking -> booking.getStatus() == Status.WAITING).collect(Collectors.toList());
                 break;
             case "REJECTED":
-                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId).stream().
-                        filter(booking -> booking.getStatus() == Status.REJECTED).collect(Collectors.toList());
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId).stream()
+                        .filter(booking -> booking.getStatus() == Status.REJECTED).collect(Collectors.toList());
                 break;
             case "PAST":
-                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId).stream().
-                        filter(booking -> booking.getEnd().isBefore(LocalDateTime.now())).collect(Collectors.toList());
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId).stream()
+                        .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now())).collect(Collectors.toList());
                 break;
             case "FUTURE":
-                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId).stream().
-                        filter(booking -> booking.getStart().isAfter(LocalDateTime.now())).collect(Collectors.toList());
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId).stream()
+                        .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
+                        .collect(Collectors.toList());
                 break;
             case "CURRENT":
-                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId).stream().
-                        filter(booking -> booking.getStart().isBefore(LocalDateTime.now())
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId).stream()
+                        .filter(booking -> booking.getStart().isBefore(LocalDateTime.now())
                                 && booking.getEnd().isAfter(LocalDateTime.now())).collect(Collectors.toList());
                 break;
             default:
@@ -137,24 +138,25 @@ public class BookingServiceImpl implements BookingService {
             case "ALL":
                 break;
             case "WAITING":
-                bookingList = bookingList.stream().
-                        filter(booking -> booking.getStatus() == Status.WAITING).collect(Collectors.toList());
+                bookingList = bookingList.stream()
+                        .filter(booking -> booking.getStatus() == Status.WAITING).collect(Collectors.toList());
                 break;
             case "REJECTED":
-                bookingList = bookingList.stream().
-                        filter(booking -> booking.getStatus() == Status.REJECTED).collect(Collectors.toList());
+                bookingList = bookingList.stream()
+                        .filter(booking -> booking.getStatus() == Status.REJECTED).collect(Collectors.toList());
                 break;
             case "PAST":
-                bookingList = bookingList.stream().
-                        filter(booking -> booking.getEnd().isBefore(LocalDateTime.now())).collect(Collectors.toList());
+                bookingList = bookingList.stream()
+                        .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now())).collect(Collectors.toList());
                 break;
             case "FUTURE":
-                bookingList = bookingList.stream().
-                        filter(booking -> booking.getStart().isAfter(LocalDateTime.now())).collect(Collectors.toList());
+                bookingList = bookingList.stream()
+                        .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
+                        .collect(Collectors.toList());
                 break;
             case "CURRENT":
-                bookingList = bookingList.stream().
-                        filter(booking -> booking.getStart().isBefore(LocalDateTime.now())
+                bookingList = bookingList.stream()
+                        .filter(booking -> booking.getStart().isBefore(LocalDateTime.now())
                                 && booking.getEnd().isAfter(LocalDateTime.now())).collect(Collectors.toList());
                 break;
             default:
