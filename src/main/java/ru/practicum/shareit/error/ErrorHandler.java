@@ -51,4 +51,10 @@ public class ErrorHandler {
     public ErrorResponse handleCommentException(final CommentException e) {
         return new ErrorResponse(e.getMessage());
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleRuntimeException(final RuntimeException e) {
+        return new ErrorResponse(e.getMessage());
+    }
 }
