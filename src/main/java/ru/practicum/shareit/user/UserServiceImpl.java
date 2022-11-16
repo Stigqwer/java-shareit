@@ -5,53 +5,50 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final UserStorage userStorage;
-    private long id = 0;
+    private final UserRepository userRepository;
 
     @Override
-    public List<User> findAllUser() {
-        return userStorage.findAllUser();
+    public List<UserDto> findAllUser() {
+        return userRepository.findAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
     }
 
     @Override
-    public User findUserById(long userId) {
-        return userStorage.findUserById(userId);
+    public UserDto findUserById(long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            return UserMapper.toUserDto(user.get());
+        } else {
+            throw new UserNotFoundException(String.format("Пользователь с id %d не найден", userId));
+        }
     }
 
     @Override
-    public User createUser(UserDto userDto) {
-        validateEmail(userDto.getEmail());
-        return userStorage.createUser(UserMapper.toUser(++id, userDto));
+    public UserDto createUser(UserDto userDto) {
+        return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
     }
 
     @Override
-    public User patchUser(long id, UserDto userDto) {
-        User user = findUserById(id);
+    public UserDto patchUser(long id, UserDto userDto) {
+        UserDto user = findUserById(id);
         if (userDto.getName() != null) {
             user.setName(userDto.getName());
         }
         if (userDto.getEmail() != null) {
-            validateEmail(userDto.getEmail());
             user.setEmail(userDto.getEmail());
         }
-        deleteUser(id);
-        return userStorage.patchUser(user);
+        return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(user)));
     }
 
 
     @Override
     public void deleteUser(long id) {
-        userStorage.deleteUser(id);
+        userRepository.deleteById(id);
     }
 
-    private void validateEmail(String email) {
-        boolean isRepeatEmail = userStorage.findAllUser().stream().map(User::getEmail).anyMatch(x -> x.equals(email));
-        if (isRepeatEmail) {
-            throw new UserValidationException(String.format("%s уже существует", email));
-        }
-    }
 }
