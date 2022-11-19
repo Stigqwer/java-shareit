@@ -7,7 +7,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.booking.BookingException;
 import ru.practicum.shareit.booking.BookingNotFoundException;
 import ru.practicum.shareit.item.CommentException;
+import ru.practicum.shareit.item.ItemException;
 import ru.practicum.shareit.item.ItemNotFoundException;
+import ru.practicum.shareit.request.ItemRequestException;
+import ru.practicum.shareit.request.ItemRequestNotFoundException;
 import ru.practicum.shareit.user.UserNotFoundException;
 import ru.practicum.shareit.user.UserValidationException;
 
@@ -24,6 +27,12 @@ public class ErrorHandler {
     @ExceptionHandler(ItemNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleItemNotFound(final ItemNotFoundException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler(ItemException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleItemException(final  ItemException e) {
         return new ErrorResponse(e.getMessage());
     }
 
@@ -49,6 +58,18 @@ public class ErrorHandler {
     @ExceptionHandler(CommentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleCommentException(final CommentException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler(ItemRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleItemRequestException(final ItemRequestException e){
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler(ItemRequestNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleItemRequestNotFound(final ItemRequestNotFoundException e) {
         return new ErrorResponse(e.getMessage());
     }
 

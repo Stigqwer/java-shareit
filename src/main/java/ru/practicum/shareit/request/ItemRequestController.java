@@ -28,4 +28,17 @@ public class ItemRequestController {
     public List<ItemRequestDto> findAllItemRequestByOwner(@RequestHeader("X-Sharer-User-Id") @NotEmpty long userId){
         return itemRequestService.findAllItemRequestByOwner(userId);
     }
+
+    @GetMapping("/all")
+    public List<ItemRequestDto> findAllItemRequest(@RequestHeader("X-Sharer-User-Id") @NotEmpty long userId,
+                                                   @RequestParam(required = false) Integer from,
+                                                   @RequestParam(required = false) Integer size){
+        return itemRequestService.findAllItemRequest(userId, from, size);
+    }
+
+    @GetMapping("/{requestId}")
+    public ItemRequestDto findItemRequestById(@RequestHeader("X-Sharer-User-Id") @NotEmpty long userId,
+                                              @PathVariable Long requestId){
+        return itemRequestService.findItemRequestById(userId, requestId);
+    }
 }

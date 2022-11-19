@@ -8,4 +8,8 @@ public interface ItemRequestService {
     ItemRequestDto createItemRequest(ItemRequestDto itemRequestDto, Long requestorId);
 
     List<ItemRequestDto> findAllItemRequestByOwner(Long ownerId);
+
+    List<ItemRequestDto> findAllItemRequest(Long userId, Integer from, Integer size);
+
+    ItemRequestDto findItemRequestById(Long userId, Long requestId);
 }

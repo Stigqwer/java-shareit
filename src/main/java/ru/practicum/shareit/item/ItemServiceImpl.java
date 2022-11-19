@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -26,9 +28,21 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
 
     @Override
-    public List<ItemDto> findAllItem(long userId) {
+    public List<ItemDto> findAllItem(long userId, Integer from, Integer size) {
         userService.findUserById(userId);
-        List<Item> items = itemRepository.findAllByOwnerId(userId);
+        List<Item> items;
+        if(from == null || size == null){
+            items = itemRepository.findAllByOwnerId(userId);
+        } else {
+          if(size <= 0) {
+              throw new ItemException(String.format("Размер страницы %s", size));
+          }  else if (from < 0) {
+              throw new ItemException("Индекс первого эллемента меньше нуля");
+          } else {
+              Pageable pageable = PageRequest.of(((from) / size), size);
+              items = itemRepository.findAllByOwnerId(userId, pageable);
+          }
+        }
         List<ItemDto> itemDtos = new ArrayList<>();
         for (Item item : items) {
             ItemDto itemDto = ItemMapper.toItemDto(item);
@@ -111,12 +125,24 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItem(long userId, String text) {
+    public List<ItemDto> searchItem(long userId, String text, Integer from, Integer size) {
         userService.findUserById(userId);
         if (text.isEmpty()) {
             return Collections.emptyList();
         } else {
-            return itemRepository.search(text).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+            if(from == null || size == null) {
+                return itemRepository.search(text).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+            } else{
+                if(size <= 0) {
+                    throw new ItemException(String.format("Размер страницы %s", size));
+                }  else if (from < 0) {
+                    throw new ItemException("Индекс первого эллемента меньше нуля");
+                } else {
+                    Pageable pageable = PageRequest.of(((from) / size), size);
+                     return itemRepository.search(userId, pageable).stream().map(ItemMapper::toItemDto)
+                             .collect(Collectors.toList());
+                }
+            }
         }
     }
 
@@ -132,5 +158,10 @@ public class ItemServiceImpl implements ItemService {
         }
         Comment comment = CommentMapper.toComment(commentDto, itemId, userId);
         return CommentMapper.toCommentDto(commentRepository.save(comment), userService.findUserById(userId));
+    }
+
+    public List<ItemDto> findAllByRequestId(Long requestId){
+        return itemRepository.findAllByRequestId(requestId).stream()
+                .map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 }
