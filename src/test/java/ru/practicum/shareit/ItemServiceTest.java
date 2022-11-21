@@ -7,12 +7,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.item.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -23,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ItemServiceTest {
 
     @Mock
@@ -228,5 +233,97 @@ public class ItemServiceTest {
     }
 
     @Test
-    void testOkSearchItem(){}
+    void testOkSearch(){
+        Item item1 = new Item(1L, "Дрель",
+                "Простая дрель", true, 2L, null);
+        Mockito.when(mockItemRepository.search(Mockito.anyString()))
+                .thenReturn(List.of(item1));
+
+        List<ItemDto> itemDtoList = itemService.searchItem(1L, "ДРЕЛЬ", null, null);
+
+        Assertions.assertEquals(List.of(ItemMapper.toItemDto(item1)), itemDtoList);
+    }
+
+    @Test
+    void testOkSearchWithPageable(){
+        Item item1 = new Item(1L, "Дрель",
+                "Простая дрель", true, 2L, null);
+        Mockito.when(mockItemRepository.search(Mockito.anyString(),Mockito.any(Pageable.class)))
+                .thenReturn(List.of(item1));
+
+        List<ItemDto> itemDtoList = itemService.searchItem(1L, "ДРЕЛЬ", 1, 1);
+
+        Assertions.assertEquals(List.of(ItemMapper.toItemDto(item1)), itemDtoList);
+    }
+    @Test
+    void testEmptyListWithEmptyText(){
+        List<ItemDto> itemDtoList = itemService.searchItem(1L, "", 1, 1);
+
+        Assertions.assertEquals(Collections.emptyList(), itemDtoList);
+    }
+
+    @Test
+    void testSizeErrorSearch(){
+        ItemException itemException = Assertions.assertThrows(ItemException.class,
+                () -> itemService.searchItem(1L, "Дрель", 0, 0));
+
+        Assertions.assertEquals("Размер страницы 0", itemException.getMessage());
+    }
+
+    @Test
+    void testIndexErrorSearch(){
+        ItemException itemException = Assertions.assertThrows(ItemException.class,
+                () -> itemService.searchItem(1L, "Дрель", -1, 1));
+
+        Assertions.assertEquals("Индекс первого эллемента меньше нуля", itemException.getMessage());
+    }
+
+    @Test
+    void testOkCreateComment() {
+        Booking booking1 = new Booking(3L, LocalDateTime.of(2015, 11, 12, 10, 25),
+                LocalDateTime.of(2016, 11, 12, 10, 25),
+                Status.WAITING, 1L, 1L);
+        Comment comment = new Comment(1L, "text", 1L,1L,
+                LocalDateTime.of(2016, 11, 12, 10, 25));
+        Mockito.when(mockBookingRepository.findAllByItemId(Mockito.anyLong()))
+                .thenReturn(List.of(booking1));
+        Mockito.when(mockCommentRepository.save(Mockito.any(Comment.class)))
+                .thenReturn(comment);
+
+
+        CommentDto commentDto = itemService.createComment(1L, 1L,
+                new CommentDto(null,"text",  null,
+                        LocalDateTime.of(2016, 11, 12, 10, 25)));
+
+        Assertions.assertEquals(CommentMapper.toCommentDto(comment,mockUserService.findUserById(1L)),
+                commentDto);
+    }
+
+    @Test
+    void testCommentException(){
+        Booking booking1 = new Booking(3L, LocalDateTime.of(2015, 11, 12, 10, 25),
+                LocalDateTime.of(2016, 11, 12, 10, 25),
+                Status.WAITING, 2L, 1L);
+        Mockito.when(mockBookingRepository.findAllByItemId(Mockito.anyLong()))
+                .thenReturn(List.of(booking1));
+
+        CommentException commentException = Assertions.assertThrows(CommentException.class,
+                () -> itemService.createComment(1L, 1L,
+                        new CommentDto(null,"text",  null,
+                                LocalDateTime.of(2016, 11, 12, 10, 25))));
+
+        Assertions.assertEquals("Пользователь с id 1 не бронировал вещ с id 1", commentException.getMessage());
+    }
+
+    @Test
+    void testOkFindAllByRequestId(){
+        Item item1 = new Item(1L, "Дрель",
+                "Простая дрель", true, 2L, 1L);
+        Mockito.when(mockItemRepository.findAllByRequestId(Mockito.anyLong()))
+                .thenReturn(List.of(item1));
+
+        List<ItemDto> itemDtoList = itemService.findAllByRequestId(1L);
+
+        Assertions.assertEquals(List.of(ItemMapper.toItemDto(item1)), itemDtoList);
+    }
 }

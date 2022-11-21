@@ -139,7 +139,7 @@ public class ItemServiceImpl implements ItemService {
                     throw new ItemException("Индекс первого эллемента меньше нуля");
                 } else {
                     Pageable pageable = PageRequest.of(((from) / size), size);
-                     return itemRepository.search(userId, pageable).stream().map(ItemMapper::toItemDto)
+                     return itemRepository.search(text, pageable).stream().map(ItemMapper::toItemDto)
                              .collect(Collectors.toList());
                 }
             }
