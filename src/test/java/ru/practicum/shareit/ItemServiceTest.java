@@ -98,7 +98,7 @@ public class ItemServiceTest {
         Mockito.when(mockItemRepository.findAllByOwnerId(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(List.of(item1));
         Mockito.when(mockBookingRepository.findAllByItemIdOrderByStartDesc(Mockito.anyLong()))
-                .thenReturn(List.of(booking3, booking2, booking1));
+                .thenReturn(List.of(booking1, booking2, booking3));
         List<ItemDto> itemDtoList1 = List.of(ItemMapper.toItemDto(item1));
         itemDtoList1.forEach(itemDto -> itemDto.setComments(Collections.emptyList()));
         itemDtoList1.forEach(itemDto -> itemDto.setLastBooking(booking2));
@@ -168,7 +168,7 @@ public class ItemServiceTest {
         Mockito.when(mockItemRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.of(item1));
         Mockito.when(mockBookingRepository.findAllByItemIdOrderByStartDesc(Mockito.anyLong()))
-                .thenReturn(List.of(booking3, booking2, booking1));
+                .thenReturn(List.of(booking1, booking2, booking3));
 
         ItemDto itemDto1 = itemService.findItemById(1L, 1L);
 

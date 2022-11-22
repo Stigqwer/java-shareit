@@ -63,13 +63,13 @@ public class ItemServiceImpl implements ItemService {
                 .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
                 .collect(Collectors.toList());
         if (lastBookings.size() != 0) {
-            itemDto.setLastBooking(lastBookings.get(lastBookings.size() - 1));
+            itemDto.setLastBooking(lastBookings.get(0));
         }
         List<Booking> nextBookings = bookings.stream()
                 .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
                 .collect(Collectors.toList());
         if (nextBookings.size() != 0) {
-            itemDto.setNextBooking(nextBookings.get(0));
+            itemDto.setNextBooking(nextBookings.get(nextBookings.size() - 1));
         }
     }
 

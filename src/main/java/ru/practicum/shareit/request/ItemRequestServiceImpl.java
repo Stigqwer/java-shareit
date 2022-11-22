@@ -1,12 +1,10 @@
 package ru.practicum.shareit.request;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.UserService;
@@ -47,8 +45,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<ItemRequestDto> findAllItemRequest(Long userId, Integer from, Integer size) {
         userService.findUserById(userId);
         if (from == null || size == null) {
-            return itemRequestRepository.findAll(Sort.by("created").descending()).stream()
-                    .map(ItemRequestMapper::toItemRequestDto).collect(Collectors.toList());
+            List<ItemRequestDto> itemRequestDtos = itemRequestRepository.findAll(Sort.by("created")
+                    .descending()).stream().filter(itemRequest -> !Objects.equals(itemRequest.getRequestorId(), userId))
+            .map(ItemRequestMapper::toItemRequestDto).collect(Collectors.toList());
+            itemRequestDtos.forEach(itemRequestDto
+                    -> itemRequestDto.setItems(itemService.findAllByRequestId(itemRequestDto.getId())));
+            return itemRequestDtos;
         } else {
             if (size <= 0) {
                 throw new ItemRequestException(String.format("Размер страницы %s", size));
@@ -72,7 +74,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         userService.findUserById(userId);
         Optional<ItemRequest> itemRequestOptional = itemRequestRepository.findById(requestId);
         if(itemRequestOptional.isEmpty()){
-            throw new ItemRequestNotFoundException(String.format("Запроса с %d не существует", requestId));
+            throw new ItemRequestNotFoundException(String.format("Запроса с id %d не существует", requestId));
         } else {
             ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequestOptional.get());
             itemRequestDto.setItems(itemService.findAllByRequestId(itemRequestDto.getId()));
