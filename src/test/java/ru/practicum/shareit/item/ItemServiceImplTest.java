@@ -15,6 +15,7 @@ import ru.practicum.shareit.request.ItemRequestService;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -35,7 +36,7 @@ public class ItemServiceImplTest {
     private final ItemRequestService itemRequestService;
 
     @Test
-    void createItem(){
+    void createItem() {
         UserDto userDto = userService.createUser(makeUserDto("user", "user@user.com"));
         ItemDto itemDto = makeItemDto("Дрель", "Простая дрель", true);
         ItemDto itemDtoFromService = itemService.createItem(userDto.getId(), itemDto);
@@ -50,7 +51,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void  createComment() throws InterruptedException {
+    void createComment() throws InterruptedException {
         UserDto userDto1 = userService.createUser(makeUserDto("user", "user@user.com"));
         ItemDto itemDto = makeItemDto("Дрель", "Простая дрель", true);
         ItemDto itemDtoFromService = itemService.createItem(userDto1.getId(), itemDto);
@@ -90,7 +91,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void patchItem(){
+    void patchItem() {
         UserDto userDto = userService.createUser(makeUserDto("user", "user@user.com"));
         ItemDto itemDto = makeItemDto("Дрель", "Простая дрель", true);
         ItemDto itemDtoCreate = itemService.createItem(userDto.getId(), itemDto);
@@ -107,13 +108,13 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void findAllItem(){
+    void findAllItem() {
         UserDto userDto = userService.createUser(makeUserDto("user", "user@user.com"));
         List<ItemDto> sourceItems =
                 List.of(makeItemDto("Дрель", "Простая дрель", true),
                         makeItemDto("Отвертка", "Аккумуляторная отвертка", true));
 
-        for(ItemDto itemDto: sourceItems){
+        for (ItemDto itemDto : sourceItems) {
             Item entity = ItemMapper.toItem(userDto.getId(), itemDto);
             em.persist(entity);
         }
@@ -122,8 +123,8 @@ public class ItemServiceImplTest {
         List<ItemDto> targetItemRequests =
                 itemService.findAllItem(userDto.getId(), null, null);
 
-        for(ItemDto sourceItem: sourceItems){
-            assertThat(targetItemRequests, hasItem( allOf(
+        for (ItemDto sourceItem : sourceItems) {
+            assertThat(targetItemRequests, hasItem(allOf(
                     hasProperty("id", notNullValue()),
                     hasProperty("name", equalTo(sourceItem.getName())),
                     hasProperty("description", equalTo(sourceItem.getDescription())),
@@ -133,7 +134,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void findAllByRequestId(){
+    void findAllByRequestId() {
         UserDto userDto = userService.createUser(makeUserDto("user", "user@user.com"));
         ItemRequestDto itemRequestDto = makeItemRequestDto("Хотел бы воспользоваться щёткой для обуви");
         ItemRequestDto itemRequestDtoFromService =
@@ -142,7 +143,7 @@ public class ItemServiceImplTest {
                 List.of(makeItemDto("Дрель", "Простая дрель", true),
                         makeItemDto("Отвертка", "Аккумуляторная отвертка", true));
 
-        for(ItemDto itemDto: sourceItems){
+        for (ItemDto itemDto : sourceItems) {
             itemDto.setRequestId(itemRequestDtoFromService.getId());
             Item entity = ItemMapper.toItem(userDto.getId(), itemDto);
             em.persist(entity);
@@ -152,8 +153,8 @@ public class ItemServiceImplTest {
         List<ItemDto> targetItemRequests =
                 itemService.findAllByRequestId(1L);
 
-        for(ItemDto sourceItem: sourceItems){
-            assertThat(targetItemRequests, hasItem( allOf(
+        for (ItemDto sourceItem : sourceItems) {
+            assertThat(targetItemRequests, hasItem(allOf(
                     hasProperty("id", notNullValue()),
                     hasProperty("name", equalTo(sourceItem.getName())),
                     hasProperty("description", equalTo(sourceItem.getDescription())),
@@ -163,13 +164,13 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void searchItem(){
+    void searchItem() {
         UserDto userDto = userService.createUser(makeUserDto("user", "user@user.com"));
         List<ItemDto> sourceItems =
                 List.of(makeItemDto("Дрель", "Простая дрель", true),
                         makeItemDto("Отвертка", "Аккумуляторная дрель", true));
 
-        for(ItemDto itemDto: sourceItems){
+        for (ItemDto itemDto : sourceItems) {
             Item entity = ItemMapper.toItem(userDto.getId(), itemDto);
             em.persist(entity);
         }
@@ -178,8 +179,8 @@ public class ItemServiceImplTest {
         List<ItemDto> targetItemRequests =
                 itemService.searchItem(userDto.getId(), "Дрель", null, null);
 
-        for(ItemDto sourceItem: sourceItems){
-            assertThat(targetItemRequests, hasItem( allOf(
+        for (ItemDto sourceItem : sourceItems) {
+            assertThat(targetItemRequests, hasItem(allOf(
                     hasProperty("id", notNullValue()),
                     hasProperty("name", equalTo(sourceItem.getName())),
                     hasProperty("description", equalTo(sourceItem.getDescription())),
@@ -194,7 +195,7 @@ public class ItemServiceImplTest {
         return itemRequestDto;
     }
 
-    private ItemDto makeItemDto(String name, String description, boolean available){
+    private ItemDto makeItemDto(String name, String description, boolean available) {
         ItemDto itemDto = new ItemDto();
         itemDto.setName(name);
         itemDto.setDescription(description);
@@ -202,20 +203,20 @@ public class ItemServiceImplTest {
         return itemDto;
     }
 
-    private UserDto makeUserDto(String name, String email){
+    private UserDto makeUserDto(String name, String email) {
         UserDto userDto = new UserDto();
         userDto.setName(name);
         userDto.setEmail(email);
         return userDto;
     }
 
-    private CommentDto makeCommentDto(String text){
+    private CommentDto makeCommentDto(String text) {
         CommentDto commentDto = new CommentDto();
         commentDto.setText(text);
         return commentDto;
     }
 
-    private Booking makeBooking(long itemId, LocalDateTime start, LocalDateTime end){
+    private Booking makeBooking(long itemId, LocalDateTime start, LocalDateTime end) {
         Booking booking = new Booking();
         booking.setItemId(itemId);
         booking.setStart(start);

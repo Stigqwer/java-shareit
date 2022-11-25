@@ -146,7 +146,7 @@ public class BookingControllerTest {
         bookingDto.setEnd(booking1.getEnd());
         bookingDto.setStatus(booking1.getStatus());
         List<BookingDto> bookingDtoList = List.of(bookingDto);
-        when(bookingService.findAllBookingByUser(anyLong(), anyString(), any(),any()))
+        when(bookingService.findAllBookingByUser(anyLong(), anyString(), any(), any()))
                 .thenReturn(bookingDtoList);
 
         mvc.perform(get("/bookings")
@@ -173,7 +173,7 @@ public class BookingControllerTest {
         bookingDto.setEnd(booking1.getEnd());
         bookingDto.setStatus(booking1.getStatus());
         List<BookingDto> bookingDtoList = List.of(bookingDto);
-        when(bookingService.findAllBookingByOwner(anyLong(), anyString(), any(),any()))
+        when(bookingService.findAllBookingByOwner(anyLong(), anyString(), any(), any()))
                 .thenReturn(bookingDtoList);
 
         mvc.perform(get("/bookings/owner")

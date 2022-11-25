@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -24,7 +25,7 @@ public class ItemRequestServiceImplTest {
     private final ItemRequestService itemRequestService;
 
     @Test
-    void createItemRequest(){
+    void createItemRequest() {
         UserDto userDto = userService.createUser(makeUserDto("user", "user@user.com"));
         ItemRequestDto itemRequestDto = makeItemRequestDto("Хотел бы воспользоваться щёткой для обуви");
         ItemRequestDto itemRequestDtoFromService =
@@ -40,7 +41,7 @@ public class ItemRequestServiceImplTest {
     }
 
     @Test
-    void findItemRequestById(){
+    void findItemRequestById() {
         UserDto userDto = userService.createUser(makeUserDto("user", "user@user.com"));
         ItemRequestDto itemRequestDto = makeItemRequestDto("Хотел бы воспользоваться щёткой для обуви");
         ItemRequestDto itemRequestDtoFromCreate =
@@ -58,38 +59,38 @@ public class ItemRequestServiceImplTest {
     }
 
     @Test
-    void findAllItemRequest(){
+    void findAllItemRequest() {
         UserDto userDto = userService.createUser(makeUserDto("user", "user@user.com"));
         UserDto userDto2 = userService.createUser(makeUserDto("update", "update@user.com"));
         List<ItemRequestDto> sourceItemRequests =
                 List.of(makeItemRequestDto("Хотел бы воспользоваться щёткой для обуви"),
                         makeItemRequestDto("Хотел бы воспользоваться дрелью"));
 
-        for(ItemRequestDto itemRequestDto: sourceItemRequests){
+        for (ItemRequestDto itemRequestDto : sourceItemRequests) {
             ItemRequest entity = ItemRequestMapper.toItemRequest(itemRequestDto, userDto.getId());
             em.persist(entity);
         }
         em.flush();
 
         List<ItemRequestDto> targetItemRequests =
-                itemRequestService.findAllItemRequest(userDto2.getId(),null, null);
+                itemRequestService.findAllItemRequest(userDto2.getId(), null, null);
 
-        for(ItemRequestDto sourceItemRequest: sourceItemRequests){
-            assertThat(targetItemRequests, hasItem( allOf(
+        for (ItemRequestDto sourceItemRequest : sourceItemRequests) {
+            assertThat(targetItemRequests, hasItem(allOf(
                     hasProperty("id", notNullValue()),
                     hasProperty("description", equalTo(sourceItemRequest.getDescription()))
-                    )));
+            )));
         }
     }
 
     @Test
-    void findAllItemRequestByOwner(){
+    void findAllItemRequestByOwner() {
         UserDto userDto = userService.createUser(makeUserDto("user", "user@user.com"));
         List<ItemRequestDto> sourceItemRequests =
                 List.of(makeItemRequestDto("Хотел бы воспользоваться щёткой для обуви"),
                         makeItemRequestDto("Хотел бы воспользоваться дрелью"));
 
-        for(ItemRequestDto itemRequestDto: sourceItemRequests){
+        for (ItemRequestDto itemRequestDto : sourceItemRequests) {
             ItemRequest entity = ItemRequestMapper.toItemRequest(itemRequestDto, userDto.getId());
             em.persist(entity);
         }
@@ -98,22 +99,22 @@ public class ItemRequestServiceImplTest {
         List<ItemRequestDto> targetItemRequests =
                 itemRequestService.findAllItemRequestByOwner(userDto.getId());
 
-        for(ItemRequestDto sourceItemRequest: sourceItemRequests){
-            assertThat(targetItemRequests, hasItem( allOf(
+        for (ItemRequestDto sourceItemRequest : sourceItemRequests) {
+            assertThat(targetItemRequests, hasItem(allOf(
                     hasProperty("id", notNullValue()),
                     hasProperty("description", equalTo(sourceItemRequest.getDescription()))
             )));
         }
     }
 
-    private UserDto makeUserDto(String name, String email){
+    private UserDto makeUserDto(String name, String email) {
         UserDto userDto = new UserDto();
         userDto.setName(name);
         userDto.setEmail(email);
         return userDto;
     }
 
-    private ItemRequestDto makeItemRequestDto(String description){
+    private ItemRequestDto makeItemRequestDto(String description) {
         ItemRequestDto itemRequestDto = new ItemRequestDto();
         itemRequestDto.setDescription(description);
         return itemRequestDto;

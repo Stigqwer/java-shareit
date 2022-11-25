@@ -31,7 +31,7 @@ public class ItemDtoJsonTest {
         Booking booking2 = new Booking(2L, LocalDateTime.of(2017, 11, 12, 10, 25),
                 LocalDateTime.of(2018, 11, 12, 10, 25),
                 Status.WAITING, 2L, 1L);
-        CommentDto commentDto = new CommentDto(null,"text",  null,
+        CommentDto commentDto = new CommentDto(null, "text", null,
                 LocalDateTime.of(2016, 11, 12, 10, 25));
         ItemDto itemDto = ItemMapper.toItemDto(item1);
         itemDto.setComments(List.of(commentDto));

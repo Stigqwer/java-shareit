@@ -175,12 +175,12 @@ public class ItemServiceTest {
     }
 
     @Test
-    void testOkCreateItem(){
+    void testOkCreateItem() {
         Item item1 = new Item(1L, "Дрель", "Простая дрель", true, 1L, null);
         Mockito.when(mockItemRepository.save(Mockito.any(Item.class)))
                 .thenReturn(item1);
 
-        ItemDto itemDto = itemService.createItem(1L, new ItemDto(null,"Дрель",
+        ItemDto itemDto = itemService.createItem(1L, new ItemDto(null, "Дрель",
                 "Простая дрель", true, null, null, null, null));
 
         Assertions.assertEquals(new ItemDto(1L, "Дрель", "Простая дрель", true,
@@ -188,7 +188,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void testOkPatchItem(){
+    void testOkPatchItem() {
         Item item1 = new Item(1L, "Дрель",
                 "Простая дрель", true, 1L, null);
         Mockito.when(mockItemRepository.save(Mockito.any(Item.class)))
@@ -196,7 +196,7 @@ public class ItemServiceTest {
         Mockito.when(mockItemRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.of(item1));
 
-        ItemDto itemDto = itemService.patchItem(1L, 1L,new ItemDto(1L,"Дрель+",
+        ItemDto itemDto = itemService.patchItem(1L, 1L, new ItemDto(1L, "Дрель+",
                 "Аккумуляторная дрель", false, null, null, null, null));
 
         Assertions.assertEquals(new ItemDto(1L, "Дрель+", "Аккумуляторная дрель", false,
@@ -204,12 +204,12 @@ public class ItemServiceTest {
     }
 
     @Test
-    void testItemNotFoundInPatchItem(){
+    void testItemNotFoundInPatchItem() {
         Mockito.when(mockItemRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.empty());
 
         ItemNotFoundException itemNotFoundException = Assertions.assertThrows(ItemNotFoundException.class,
-                () -> itemService.patchItem(1L, 1L, new ItemDto(1L,"Дрель+",
+                () -> itemService.patchItem(1L, 1L, new ItemDto(1L, "Дрель+",
                         "Аккумуляторная дрель", false, null,
                         null, null, null)));
 
@@ -217,22 +217,22 @@ public class ItemServiceTest {
     }
 
     @Test
-    void testItemNotOwnerInPatchItem(){
+    void testItemNotOwnerInPatchItem() {
         Item item1 = new Item(1L, "Дрель",
                 "Простая дрель", true, 2L, null);
         Mockito.when(mockItemRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.of(item1));
 
         ItemNotFoundException itemNotFoundException = Assertions.assertThrows(ItemNotFoundException.class,
-                () -> itemService.patchItem(1L,1L,
-                new ItemDto(1L,"Дрель+","Аккумуляторная дрель", false, null,
-                null, null, null)));
+                () -> itemService.patchItem(1L, 1L,
+                        new ItemDto(1L, "Дрель+", "Аккумуляторная дрель", false, null,
+                                null, null, null)));
 
         Assertions.assertEquals("У пользователя с id 1 нет вещи с id 1", itemNotFoundException.getMessage());
     }
 
     @Test
-    void testOkSearch(){
+    void testOkSearch() {
         Item item1 = new Item(1L, "Дрель",
                 "Простая дрель", true, 2L, null);
         Mockito.when(mockItemRepository.search(Mockito.anyString()))
@@ -244,25 +244,26 @@ public class ItemServiceTest {
     }
 
     @Test
-    void testOkSearchWithPageable(){
+    void testOkSearchWithPageable() {
         Item item1 = new Item(1L, "Дрель",
                 "Простая дрель", true, 2L, null);
-        Mockito.when(mockItemRepository.search(Mockito.anyString(),Mockito.any(Pageable.class)))
+        Mockito.when(mockItemRepository.search(Mockito.anyString(), Mockito.any(Pageable.class)))
                 .thenReturn(List.of(item1));
 
         List<ItemDto> itemDtoList = itemService.searchItem(1L, "ДРЕЛЬ", 1, 1);
 
         Assertions.assertEquals(List.of(ItemMapper.toItemDto(item1)), itemDtoList);
     }
+
     @Test
-    void testEmptyListWithEmptyText(){
+    void testEmptyListWithEmptyText() {
         List<ItemDto> itemDtoList = itemService.searchItem(1L, "", 1, 1);
 
         Assertions.assertEquals(Collections.emptyList(), itemDtoList);
     }
 
     @Test
-    void testSizeErrorSearch(){
+    void testSizeErrorSearch() {
         ItemException itemException = Assertions.assertThrows(ItemException.class,
                 () -> itemService.searchItem(1L, "Дрель", 0, 0));
 
@@ -270,7 +271,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void testIndexErrorSearch(){
+    void testIndexErrorSearch() {
         ItemException itemException = Assertions.assertThrows(ItemException.class,
                 () -> itemService.searchItem(1L, "Дрель", -1, 1));
 
@@ -282,7 +283,7 @@ public class ItemServiceTest {
         Booking booking1 = new Booking(3L, LocalDateTime.of(2015, 11, 12, 10, 25),
                 LocalDateTime.of(2016, 11, 12, 10, 25),
                 Status.WAITING, 1L, 1L);
-        Comment comment = new Comment(1L, "text", 1L,1L,
+        Comment comment = new Comment(1L, "text", 1L, 1L,
                 LocalDateTime.of(2016, 11, 12, 10, 25));
         Mockito.when(mockBookingRepository.findAllByItemId(Mockito.anyLong()))
                 .thenReturn(List.of(booking1));
@@ -291,15 +292,15 @@ public class ItemServiceTest {
 
 
         CommentDto commentDto = itemService.createComment(1L, 1L,
-                new CommentDto(null,"text",  null,
+                new CommentDto(null, "text", null,
                         LocalDateTime.of(2016, 11, 12, 10, 25)));
 
-        Assertions.assertEquals(CommentMapper.toCommentDto(comment,mockUserService.findUserById(1L)),
+        Assertions.assertEquals(CommentMapper.toCommentDto(comment, mockUserService.findUserById(1L)),
                 commentDto);
     }
 
     @Test
-    void testCommentException(){
+    void testCommentException() {
         Booking booking1 = new Booking(3L, LocalDateTime.of(2015, 11, 12, 10, 25),
                 LocalDateTime.of(2016, 11, 12, 10, 25),
                 Status.WAITING, 2L, 1L);
@@ -308,14 +309,14 @@ public class ItemServiceTest {
 
         CommentException commentException = Assertions.assertThrows(CommentException.class,
                 () -> itemService.createComment(1L, 1L,
-                        new CommentDto(null,"text",  null,
+                        new CommentDto(null, "text", null,
                                 LocalDateTime.of(2016, 11, 12, 10, 25))));
 
         Assertions.assertEquals("Пользователь с id 1 не бронировал вещ с id 1", commentException.getMessage());
     }
 
     @Test
-    void testOkFindAllByRequestId(){
+    void testOkFindAllByRequestId() {
         Item item1 = new Item(1L, "Дрель",
                 "Простая дрель", true, 2L, 1L);
         Mockito.when(mockItemRepository.findAllByRequestId(Mockito.anyLong()))

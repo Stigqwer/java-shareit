@@ -21,8 +21,8 @@ public class ItemRequestJsonTest {
 
     @Test
     void testItemRequestDto() throws IOException {
-        ItemDto itemDto = new ItemDto(1L,"Дрель+","Аккумуляторная дрель", false,
-                null,null, null, null);
+        ItemDto itemDto = new ItemDto(1L, "Дрель+", "Аккумуляторная дрель", false,
+                null, null, null, null);
         ItemRequestDto itemRequestDto = new ItemRequestDto(1L,
                 "бла бла бла",
                 LocalDateTime.of(2023, 11, 12, 10, 25, 1),

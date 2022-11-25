@@ -520,7 +520,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    void tesSizeErrorFindAllBookingByUserByOwner(){
+    void tesSizeErrorFindAllBookingByUserByOwner() {
         Mockito.when(mockItemService.findAllItem(Mockito.anyLong(), Mockito.any(), Mockito.any()))
                 .thenReturn(List.of(new ItemDto(1L, "Дрель", "Простая дрель",
                         true, null, null, Collections.emptyList(), null)));

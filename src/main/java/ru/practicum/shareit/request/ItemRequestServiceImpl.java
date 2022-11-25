@@ -46,8 +46,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         userService.findUserById(userId);
         if (from == null || size == null) {
             List<ItemRequestDto> itemRequestDtos = itemRequestRepository.findAll(Sort.by("created")
-                    .descending()).stream().filter(itemRequest -> !Objects.equals(itemRequest.getRequestorId(), userId))
-            .map(ItemRequestMapper::toItemRequestDto).collect(Collectors.toList());
+                            .descending()).stream().filter(itemRequest -> !Objects.equals(itemRequest.getRequestorId(), userId))
+                    .map(ItemRequestMapper::toItemRequestDto).collect(Collectors.toList());
             itemRequestDtos.forEach(itemRequestDto
                     -> itemRequestDto.setItems(itemService.findAllByRequestId(itemRequestDto.getId())));
             return itemRequestDtos;
@@ -73,7 +73,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public ItemRequestDto findItemRequestById(Long userId, Long requestId) {
         userService.findUserById(userId);
         Optional<ItemRequest> itemRequestOptional = itemRequestRepository.findById(requestId);
-        if(itemRequestOptional.isEmpty()){
+        if (itemRequestOptional.isEmpty()) {
             throw new ItemRequestNotFoundException(String.format("Запроса с id %d не существует", requestId));
         } else {
             ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequestOptional.get());

@@ -120,7 +120,7 @@ public class ItemRequestControllerTest {
         ItemRequestDto itemRequestDto = new ItemRequestDto(1L,
                 "Хотел бы воспользоваться щёткой для обуви", LocalDateTime.now(), null);
         List<ItemRequestDto> itemRequestDtoList = List.of(itemRequestDto);
-        when(itemRequestService.findAllItemRequest(anyLong(),any(), any()))
+        when(itemRequestService.findAllItemRequest(anyLong(), any(), any()))
                 .thenReturn(itemRequestDtoList);
 
         mvc.perform(get("/requests/all")

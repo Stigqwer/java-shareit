@@ -42,7 +42,7 @@ public class ItemRequestServiceTest {
     }
 
     @Test
-    void testOkCreateItemRequest(){
+    void testOkCreateItemRequest() {
         ItemRequest itemRequest = new ItemRequest(1L, "Хотел бы воспользоваться щёткой для обуви",
                 1L, LocalDateTime.of(2024, 11, 12, 10, 25));
         Mockito.when(mockItemRequestRepository.save(Mockito.any(ItemRequest.class)))
@@ -50,13 +50,13 @@ public class ItemRequestServiceTest {
         ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest);
 
         ItemRequestDto itemRequestDto1 = itemRequestService.createItemRequest(new ItemRequestDto(null,
-                "Хотел бы воспользоваться щёткой для обуви", null,  null), 1L);
+                "Хотел бы воспользоваться щёткой для обуви", null, null), 1L);
 
         Assertions.assertEquals(itemRequestDto, itemRequestDto1);
     }
 
     @Test
-    void testOkFindAllItemRequestByOwner(){
+    void testOkFindAllItemRequestByOwner() {
         ItemRequest itemRequest = new ItemRequest(1L, "Хотел бы воспользоваться щёткой для обуви",
                 1L, LocalDateTime.of(2024, 11, 12, 10, 25));
         Mockito.when(mockItemRequestRepository.findAllByRequestorIdOrderByCreatedDesc(Mockito.anyLong()))
@@ -70,7 +70,7 @@ public class ItemRequestServiceTest {
     }
 
     @Test
-    void testOkFindAllItemRequest(){
+    void testOkFindAllItemRequest() {
         ItemRequest itemRequest = new ItemRequest(1L, "Хотел бы воспользоваться щёткой для обуви",
                 2L, LocalDateTime.of(2024, 11, 12, 10, 25));
         Mockito.when(mockItemRequestRepository.findAll(Mockito.any(Sort.class)))
@@ -84,7 +84,7 @@ public class ItemRequestServiceTest {
     }
 
     @Test
-    void testOkFindAllItemRequestWithPageable(){
+    void testOkFindAllItemRequestWithPageable() {
         ItemRequest itemRequest = new ItemRequest(1L, "Хотел бы воспользоваться щёткой для обуви",
                 2L, LocalDateTime.of(2024, 11, 12, 10, 25));
         Mockito.when(mockItemRequestRepository.findAll(Mockito.any(Pageable.class)))
@@ -98,7 +98,7 @@ public class ItemRequestServiceTest {
     }
 
     @Test
-    void testSizeErrorFindAllItemRequest(){
+    void testSizeErrorFindAllItemRequest() {
         ItemRequestException itemRequestException = Assertions.assertThrows(ItemRequestException.class,
                 () -> itemRequestService.findAllItemRequest(1L, 1, 0));
 
@@ -106,7 +106,7 @@ public class ItemRequestServiceTest {
     }
 
     @Test
-    void testIndexErrorFindAllItemRequest(){
+    void testIndexErrorFindAllItemRequest() {
         ItemRequestException itemRequestException = Assertions.assertThrows(ItemRequestException.class,
                 () -> itemRequestService.findAllItemRequest(1L, -1, 1));
 
@@ -114,7 +114,7 @@ public class ItemRequestServiceTest {
     }
 
     @Test
-    void testOkFindItemRequestById(){
+    void testOkFindItemRequestById() {
         ItemRequest itemRequest = new ItemRequest(1L, "Хотел бы воспользоваться щёткой для обуви",
                 1L, LocalDateTime.of(2024, 11, 12, 10, 25));
         Mockito.when(mockItemRequestRepository.findById(Mockito.anyLong()))
@@ -122,13 +122,13 @@ public class ItemRequestServiceTest {
         ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest);
         itemRequestDto.setItems(Collections.emptyList());
 
-        ItemRequestDto itemRequestDto1 = itemRequestService.findItemRequestById(1L,1L);
+        ItemRequestDto itemRequestDto1 = itemRequestService.findItemRequestById(1L, 1L);
 
         Assertions.assertEquals(itemRequestDto, itemRequestDto1);
     }
 
     @Test
-    void testItemRequestNotFound(){
+    void testItemRequestNotFound() {
         Mockito.when(mockItemRequestRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.empty());
 

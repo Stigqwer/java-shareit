@@ -158,10 +158,10 @@ public class ItemControllerTest {
     }
 
     @Test
-    void createComment() throws  Exception {
-        CommentDto commentDto = new CommentDto(1L,"text",  "Maksim",
+    void createComment() throws Exception {
+        CommentDto commentDto = new CommentDto(1L, "text", "Maksim",
                 LocalDateTime.of(2016, 11, 12, 10, 25));
-        when(itemService.createComment(anyLong(),anyLong(),any(CommentDto.class)))
+        when(itemService.createComment(anyLong(), anyLong(), any(CommentDto.class)))
                 .thenReturn(commentDto);
 
         mvc.perform(post("/items/{itemId}/comment", 1)
@@ -177,17 +177,17 @@ public class ItemControllerTest {
     }
 
     @Test
-    void commentException() throws  Exception{
-        CommentDto commentDto = new CommentDto(1L,"text",  "Maksim",
+    void commentException() throws Exception {
+        CommentDto commentDto = new CommentDto(1L, "text", "Maksim",
                 LocalDateTime.of(2016, 11, 12, 10, 25));
-        when(itemService.createComment(anyLong(),anyLong(),any(CommentDto.class)))
+        when(itemService.createComment(anyLong(), anyLong(), any(CommentDto.class)))
                 .thenThrow(CommentException.class);
         mvc.perform(post("/items/{itemId}/comment", 1)
-                .content(objectMapper.writeValueAsString(commentDto))
-                .header("X-Sharer-User-Id", 1)
-                .characterEncoding(StandardCharsets.UTF_8)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(commentDto))
+                        .header("X-Sharer-User-Id", 1)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().is(400));
     }

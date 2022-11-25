@@ -20,15 +20,15 @@ public class BookingDtoJsonTest {
 
     @Test
     void testBookingDto() throws Exception {
-        UserDto userDto = new UserDto(1L,"update", "update@user.com");
-        ItemDto itemDto = new ItemDto(1L,"Дрель+","Аккумуляторная дрель", false,
-                null,null, null, null);
-       BookingDto bookingDto = new BookingDto(1L,
-               LocalDateTime.of(2023, 11, 12, 10, 25, 1),
-               LocalDateTime.of(2024, 11, 12, 10, 25, 1),
-               Status.WAITING,
-               userDto,
-               itemDto);
+        UserDto userDto = new UserDto(1L, "update", "update@user.com");
+        ItemDto itemDto = new ItemDto(1L, "Дрель+", "Аккумуляторная дрель", false,
+                null, null, null, null);
+        BookingDto bookingDto = new BookingDto(1L,
+                LocalDateTime.of(2023, 11, 12, 10, 25, 1),
+                LocalDateTime.of(2024, 11, 12, 10, 25, 1),
+                Status.WAITING,
+                userDto,
+                itemDto);
 
         JsonContent<BookingDto> result = json.write(bookingDto);
 
