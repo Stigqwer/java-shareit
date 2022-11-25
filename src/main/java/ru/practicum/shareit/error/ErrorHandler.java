@@ -12,7 +12,6 @@ import ru.practicum.shareit.item.ItemNotFoundException;
 import ru.practicum.shareit.request.ItemRequestException;
 import ru.practicum.shareit.request.ItemRequestNotFoundException;
 import ru.practicum.shareit.user.UserNotFoundException;
-import ru.practicum.shareit.user.UserValidationException;
 
 
 @RestControllerAdvice("ru.practicum.shareit")
@@ -33,13 +32,6 @@ public class ErrorHandler {
     @ExceptionHandler(ItemException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleItemException(final ItemException e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-
-    @ExceptionHandler(UserValidationException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleUserValidation(final UserValidationException e) {
         return new ErrorResponse(e.getMessage());
     }
 

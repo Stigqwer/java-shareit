@@ -97,18 +97,6 @@ public class UserControllerTest {
     }
 
     @Test
-    void userValidationException() throws Exception {
-        when(userService.findUserById(anyLong()))
-                .thenThrow(UserValidationException.class);
-        mvc.perform(get("/users/{userId}", 1)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().is(409));
-    }
-
-    @Test
     void findAllUser() throws Exception {
         List<UserDto> userDtoList = List.of(new UserDto(1L, "update", "update@user.com"));
         when(userService.findAllUser())
