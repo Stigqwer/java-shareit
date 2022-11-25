@@ -97,7 +97,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void UserValidationException() throws Exception {
+    void userValidationException() throws Exception {
         when(userService.findUserById(anyLong()))
                 .thenThrow(UserValidationException.class);
         mvc.perform(get("/users/{userId}", 1)

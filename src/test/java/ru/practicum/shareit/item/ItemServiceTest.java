@@ -45,8 +45,8 @@ public class ItemServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        itemService = new ItemServiceImpl(mockCommentRepository
-                , mockBookingRepository, mockUserService, mockItemRepository);
+        itemService = new ItemServiceImpl(mockCommentRepository,
+                mockBookingRepository, mockUserService, mockItemRepository);
         Mockito.when(mockUserService.findUserById(Mockito.anyLong()))
                 .thenReturn(new UserDto(1L, "update", "update@user.com"));
     }
