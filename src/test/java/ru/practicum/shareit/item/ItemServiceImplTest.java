@@ -151,7 +151,7 @@ public class ItemServiceImplTest {
         em.flush();
 
         List<ItemDto> targetItemRequests =
-                itemService.findAllByRequestId(1L);
+                itemService.findAllByRequestId(itemRequestDtoFromService.getId());
 
         for (ItemDto sourceItem : sourceItems) {
             assertThat(targetItemRequests, hasItem(allOf(
