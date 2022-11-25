@@ -32,7 +32,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(ItemException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleItemException(final  ItemException e) {
+    public ErrorResponse handleItemException(final ItemException e) {
         return new ErrorResponse(e.getMessage());
     }
 
@@ -63,7 +63,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(ItemRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleItemRequestException(final ItemRequestException e){
+    public ErrorResponse handleItemRequestException(final ItemRequestException e) {
         return new ErrorResponse(e.getMessage());
     }
 

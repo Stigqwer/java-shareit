@@ -31,17 +31,17 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> findAllItem(long userId, Integer from, Integer size) {
         userService.findUserById(userId);
         List<Item> items;
-        if(from == null || size == null){
+        if (from == null || size == null) {
             items = itemRepository.findAllByOwnerId(userId);
         } else {
-          if(size <= 0) {
-              throw new ItemException(String.format("Размер страницы %s", size));
-          }  else if (from < 0) {
-              throw new ItemException("Индекс первого эллемента меньше нуля");
-          } else {
-              Pageable pageable = PageRequest.of(((from) / size), size);
-              items = itemRepository.findAllByOwnerId(userId, pageable);
-          }
+            if (size <= 0) {
+                throw new ItemException(String.format("Размер страницы %s", size));
+            } else if (from < 0) {
+                throw new ItemException("Индекс первого эллемента меньше нуля");
+            } else {
+                Pageable pageable = PageRequest.of(((from) / size), size);
+                items = itemRepository.findAllByOwnerId(userId, pageable);
+            }
         }
         List<ItemDto> itemDtos = new ArrayList<>();
         for (Item item : items) {
@@ -130,17 +130,17 @@ public class ItemServiceImpl implements ItemService {
         if (text.isEmpty()) {
             return Collections.emptyList();
         } else {
-            if(from == null || size == null) {
+            if (from == null || size == null) {
                 return itemRepository.search(text).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
-            } else{
-                if(size <= 0) {
+            } else {
+                if (size <= 0) {
                     throw new ItemException(String.format("Размер страницы %s", size));
-                }  else if (from < 0) {
+                } else if (from < 0) {
                     throw new ItemException("Индекс первого эллемента меньше нуля");
                 } else {
                     Pageable pageable = PageRequest.of(((from) / size), size);
-                     return itemRepository.search(text, pageable).stream().map(ItemMapper::toItemDto)
-                             .collect(Collectors.toList());
+                    return itemRepository.search(text, pageable).stream().map(ItemMapper::toItemDto)
+                            .collect(Collectors.toList());
                 }
             }
         }
@@ -160,7 +160,7 @@ public class ItemServiceImpl implements ItemService {
         return CommentMapper.toCommentDto(commentRepository.save(comment), userService.findUserById(userId));
     }
 
-    public List<ItemDto> findAllByRequestId(Long requestId){
+    public List<ItemDto> findAllByRequestId(Long requestId) {
         return itemRepository.findAllByRequestId(requestId).stream()
                 .map(ItemMapper::toItemDto).collect(Collectors.toList());
     }

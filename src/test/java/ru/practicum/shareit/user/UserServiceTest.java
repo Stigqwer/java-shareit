@@ -80,7 +80,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testOkDeleteUser(){
+    void testOkDeleteUser() {
         userService.deleteUser(1L);
 
         Mockito.verify(mockUserRepository, Mockito.times(1))

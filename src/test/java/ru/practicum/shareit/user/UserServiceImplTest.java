@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.dto.UserDto;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -21,7 +22,7 @@ public class UserServiceImplTest {
     private final UserService service;
 
     @Test
-    void createUser(){
+    void createUser() {
         UserDto userDto = makeUserDto("user", "user@user.com");
         UserDto userDtoFromService = service.createUser(userDto);
 
@@ -34,7 +35,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void findUserById(){
+    void findUserById() {
         UserDto userDto = makeUserDto("user", "user@user.com");
         UserDto userDtoCreate = service.createUser(userDto);
         UserDto userDtoFromService = service.findUserById(userDtoCreate.getId());
@@ -48,11 +49,11 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void patchUser(){
+    void patchUser() {
         UserDto userDto = makeUserDto("user", "user@user.com");
         UserDto userDtoCreate = service.createUser(userDto);
         UserDto userDtoUpdate = makeUserDto("update", "update@user.com");
-        UserDto userDtoFromService = service.patchUser(userDtoCreate.getId(),userDtoUpdate);
+        UserDto userDtoFromService = service.patchUser(userDtoCreate.getId(), userDtoUpdate);
 
         TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.id = :id", User.class);
         User user = query.setParameter("id", userDtoFromService.getId()).getSingleResult();
@@ -63,7 +64,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void findAllUser(){
+    void findAllUser() {
         List<UserDto> sourceUsers = List.of(
                 makeUserDto("user", "user@user.com"),
                 makeUserDto("update", "update@user.com")
@@ -78,7 +79,7 @@ public class UserServiceImplTest {
 
         assertThat(targetUsers, hasSize(sourceUsers.size()));
         for (UserDto sourceUser : sourceUsers) {
-            assertThat(targetUsers, hasItem( allOf(
+            assertThat(targetUsers, hasItem(allOf(
                     hasProperty("id", notNullValue()),
                     hasProperty("name", equalTo(sourceUser.getName())),
                     hasProperty("email", equalTo(sourceUser.getEmail()))
@@ -87,7 +88,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void deleteUser(){
+    void deleteUser() {
         List<UserDto> sourceUsers = List.of(
                 makeUserDto("user", "user@user.com"),
                 makeUserDto("update", "update@user.com")
@@ -107,7 +108,7 @@ public class UserServiceImplTest {
         assertThat(userDto.getEmail(), equalTo(sourceUsers.get(1).getEmail()));
     }
 
-    private UserDto makeUserDto(String name, String email){
+    private UserDto makeUserDto(String name, String email) {
         UserDto userDto = new UserDto();
         userDto.setName(name);
         userDto.setEmail(email);

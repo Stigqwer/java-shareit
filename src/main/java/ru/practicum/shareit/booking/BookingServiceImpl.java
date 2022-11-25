@@ -83,8 +83,8 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> findAllBookingByUser(long bookerId, String state, Integer from, Integer size) {
         userService.findUserById(bookerId);
         List<Booking> bookingList;
-        if(from == null || size == null) {
-         bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId);
+        if (from == null || size == null) {
+            bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId);
         } else {
             if (size <= 0) {
                 throw new BookingException(String.format("Размер страницы %s", size));
@@ -92,7 +92,7 @@ public class BookingServiceImpl implements BookingService {
                 throw new BookingException("Индекс первого эллемента меньше нуля");
             } else {
                 Pageable pageable = PageRequest.of(((from) / size), size);
-                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId,pageable);
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId, pageable);
             }
         }
         bookingList = getBookingByState(state, bookingList);
