@@ -9,7 +9,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -21,6 +20,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.validation.ValidationException;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -57,30 +57,11 @@ public class ItemServiceTest {
     }
 
     @Test
-    void testOkFindAllItemWithoutPageable() {
-        Item item1 = new Item(1L, "Дрель", "Простая дрель", true, 1L, null);
-        Item item2 = new Item(2L, "Отвертка", "Аккумуляторная отвертка",
-                true, 1L, null);
-        Item item3 = new Item(3L, "Клей момент",
-                "Тюбик суперклея марки Момент", true, 1L, null);
-        Mockito.when(mockItemRepository.findAllByOwnerId(Mockito.anyLong(), PageRequest.of(0,10)))
-                .thenReturn(List.of(item1, item2, item3));
-        List<ItemDto> itemDtoList1 = List.of(ItemMapper.toItemDto(item1),
-                ItemMapper.toItemDto(item2), ItemMapper.toItemDto(item3));
-        itemDtoList1.forEach(itemDto -> itemDto.setComments(Collections.emptyList()));
-
-        List<ItemDto> itemDtoList = itemService.findAllItem(1L, null, null);
-
-        Assertions.assertEquals(itemDtoList1, itemDtoList);
-    }
-
-    @Test
-    void testOkFindAllItemWithPageable() {
+    void testOkFindAllItem() {
         Item item1 = new Item(1L, "Дрель", "Простая дрель", true, 1L, null);
         Mockito.when(mockItemRepository.findAllByOwnerId(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(List.of(item1));
         List<ItemDto> itemDtoList1 = List.of(ItemMapper.toItemDto(item1));
-        itemDtoList1.forEach(itemDto -> itemDto.setComments(Collections.emptyList()));
 
         List<ItemDto> itemDtoList = itemService.findAllItem(1L, 1, 1);
 
@@ -102,10 +83,9 @@ public class ItemServiceTest {
         Mockito.when(mockItemRepository.findAllByOwnerId(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(List.of(item1));
         Mockito.when(mockBookingRepository
-                        .findAllByItemIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
+                        .findAllByStatusOrderByStartDesc(Mockito.any()))
                 .thenReturn(List.of(booking1, booking2, booking3));
         List<ItemDto> itemDtoList1 = List.of(ItemMapper.toItemDto(item1));
-        itemDtoList1.forEach(itemDto -> itemDto.setComments(Collections.emptyList()));
         itemDtoList1.forEach(itemDto -> itemDto.setLastBooking(booking2));
         itemDtoList1.forEach(itemDto -> itemDto.setNextBooking(booking1));
 
@@ -116,18 +96,18 @@ public class ItemServiceTest {
 
     @Test
     void testSizeErrorFindAllItem() {
-        ItemException itemException = Assertions.assertThrows(ItemException.class,
+        ValidationException validationExceptionn = Assertions.assertThrows(ValidationException.class,
                 () -> itemService.findAllItem(1L, 1, -1));
 
-        Assertions.assertEquals("Размер страницы -1", itemException.getMessage());
+        Assertions.assertEquals("Размер страницы -1", validationExceptionn.getMessage());
     }
 
     @Test
     void testIndexErrorFindAllItem() {
-        ItemException itemException = Assertions.assertThrows(ItemException.class,
+        ValidationException validationException = Assertions.assertThrows(ValidationException.class,
                 () -> itemService.findAllItem(1L, -1, 1));
 
-        Assertions.assertEquals("Индекс первого эллемента меньше нуля", itemException.getMessage());
+        Assertions.assertEquals("Индекс первого эллемента меньше нуля", validationException.getMessage());
     }
 
     @Test
@@ -173,7 +153,7 @@ public class ItemServiceTest {
         Mockito.when(mockItemRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.of(item1));
         Mockito.when(mockBookingRepository
-                        .findAllByItemIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
+                        .findAllByItemIdOrderByStartDesc(Mockito.anyLong()))
                 .thenReturn(List.of(booking1, booking2, booking3));
 
         ItemDto itemDto1 = itemService.findItemById(1L, 1L);
@@ -242,10 +222,10 @@ public class ItemServiceTest {
     void testOkSearch() {
         Item item1 = new Item(1L, "Дрель",
                 "Простая дрель", true, 2L, null);
-        Mockito.when(mockItemRepository.search(Mockito.anyString(), PageRequest.of(0,10)))
+        Mockito.when(mockItemRepository.search(Mockito.anyString(), Mockito.any(Pageable.class)))
                 .thenReturn(List.of(item1));
 
-        List<ItemDto> itemDtoList = itemService.searchItem(1L, "ДРЕЛЬ", null, null);
+        List<ItemDto> itemDtoList = itemService.searchItem(1L, "ДРЕЛЬ", 1, 1);
 
         Assertions.assertEquals(List.of(ItemMapper.toItemDto(item1)), itemDtoList);
     }
@@ -267,22 +247,6 @@ public class ItemServiceTest {
         List<ItemDto> itemDtoList = itemService.searchItem(1L, "", 1, 1);
 
         Assertions.assertEquals(Collections.emptyList(), itemDtoList);
-    }
-
-    @Test
-    void testSizeErrorSearch() {
-        ItemException itemException = Assertions.assertThrows(ItemException.class,
-                () -> itemService.searchItem(1L, "Дрель", 0, 0));
-
-        Assertions.assertEquals("Размер страницы 0", itemException.getMessage());
-    }
-
-    @Test
-    void testIndexErrorSearch() {
-        ItemException itemException = Assertions.assertThrows(ItemException.class,
-                () -> itemService.searchItem(1L, "Дрель", -1, 1));
-
-        Assertions.assertEquals("Индекс первого эллемента меньше нуля", itemException.getMessage());
     }
 
     @Test

@@ -118,7 +118,7 @@ public class BookingServiceImplTest {
         em.flush();
 
         List<BookingDto> targetItemRequests =
-                bookingService.findAllBookingByUser(userDto2.getId(), "ALL", null, null);
+                bookingService.findAllBookingByUser(userDto2.getId(), "ALL", 0, 10);
 
         for (Booking sourceBooking : sourceBookings) {
             assertThat(targetItemRequests, hasItem(allOf(
@@ -156,7 +156,7 @@ public class BookingServiceImplTest {
         em.flush();
 
         List<BookingDto> targetItemRequests =
-                bookingService.findAllBookingByOwner(userDto1.getId(), "ALL", null, null);
+                bookingService.findAllBookingByOwner(userDto1.getId(), "ALL", 0, 10);
 
         for (Booking sourceBooking : sourceBookings) {
             assertThat(targetItemRequests, hasItem(allOf(

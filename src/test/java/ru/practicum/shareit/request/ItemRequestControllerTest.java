@@ -68,20 +68,6 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    void itemRequestException() throws Exception {
-        when(itemRequestService.findItemRequestById(anyLong(), anyLong()))
-                .thenThrow(ItemRequestException.class);
-
-        mvc.perform(get("/requests/{requestId}", 1)
-                        .header("X-Sharer-User-Id", 1)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().is(400));
-    }
-
-    @Test
     void itemRequestNotFoundException() throws Exception {
         when(itemRequestService.findItemRequestById(anyLong(), anyLong()))
                 .thenThrow(ItemRequestNotFoundException.class);

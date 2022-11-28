@@ -9,7 +9,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.ItemService;
@@ -244,14 +243,14 @@ public class BookingServiceTest {
                 Status.WAITING, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
         Mockito.when(mockBookingRepository
-                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
+                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(bookings);
         List<BookingDto> bookingDtoList = bookings.stream()
                 .map(booking -> BookingMapper.toBookingDto(booking, mockUserService.findUserById(1L),
                         mockItemService.findItemById(1L, 1L))).collect(Collectors.toList());
 
         List<BookingDto> bookingDtoList1 = bookingService
-                .findAllBookingByUser(1L, "ALL", null, null);
+                .findAllBookingByUser(1L, "ALL", 0, 10);
 
         Assertions.assertEquals(bookingDtoList, bookingDtoList1);
     }
@@ -269,14 +268,14 @@ public class BookingServiceTest {
                 Status.REJECTED, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
         Mockito.when(mockBookingRepository
-                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(),PageRequest.of(0, 10)))
+                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(),Mockito.any(Pageable.class)))
                 .thenReturn(bookings);
         List<BookingDto> bookingDtoList = Stream.of(booking1, booking2)
                 .map(booking -> BookingMapper.toBookingDto(booking, mockUserService.findUserById(1L),
                         mockItemService.findItemById(1L, 1L))).collect(Collectors.toList());
 
         List<BookingDto> bookingDtoList1 = bookingService
-                .findAllBookingByUser(1L, "WAITING", null, null);
+                .findAllBookingByUser(1L, "WAITING", 0, 10);
 
         Assertions.assertEquals(bookingDtoList, bookingDtoList1);
     }
@@ -294,14 +293,14 @@ public class BookingServiceTest {
                 Status.REJECTED, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
         Mockito.when(mockBookingRepository
-                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
+                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(bookings);
         List<BookingDto> bookingDtoList = Stream.of(booking3)
                 .map(booking -> BookingMapper.toBookingDto(booking, mockUserService.findUserById(1L),
                         mockItemService.findItemById(1L, 1L))).collect(Collectors.toList());
 
         List<BookingDto> bookingDtoList1 = bookingService
-                .findAllBookingByUser(1L, "REJECTED", null, null);
+                .findAllBookingByUser(1L, "REJECTED", 0, 10);
 
         Assertions.assertEquals(bookingDtoList, bookingDtoList1);
     }
@@ -319,14 +318,14 @@ public class BookingServiceTest {
                 Status.REJECTED, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
         Mockito.when(mockBookingRepository
-                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
+                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(bookings);
         List<BookingDto> bookingDtoList = Stream.of(booking1)
                 .map(booking -> BookingMapper.toBookingDto(booking, mockUserService.findUserById(1L),
                         mockItemService.findItemById(1L, 1L))).collect(Collectors.toList());
 
         List<BookingDto> bookingDtoList1 = bookingService
-                .findAllBookingByUser(1L, "FUTURE", null, null);
+                .findAllBookingByUser(1L, "FUTURE", 0, 10);
 
         Assertions.assertEquals(bookingDtoList, bookingDtoList1);
     }
@@ -344,14 +343,14 @@ public class BookingServiceTest {
                 Status.REJECTED, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
         Mockito.when(mockBookingRepository
-                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
+                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(bookings);
         List<BookingDto> bookingDtoList = Stream.of(booking2, booking3)
                 .map(booking -> BookingMapper.toBookingDto(booking, mockUserService.findUserById(1L),
                         mockItemService.findItemById(1L, 1L))).collect(Collectors.toList());
 
         List<BookingDto> bookingDtoList1 = bookingService
-                .findAllBookingByUser(1L, "PAST", null, null);
+                .findAllBookingByUser(1L, "PAST", 0, 10);
 
         Assertions.assertEquals(bookingDtoList, bookingDtoList1);
     }
@@ -369,14 +368,14 @@ public class BookingServiceTest {
                 Status.REJECTED, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
         Mockito.when(mockBookingRepository
-                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
+                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(bookings);
         List<BookingDto> bookingDtoList = Stream.of(booking2)
                 .map(booking -> BookingMapper.toBookingDto(booking, mockUserService.findUserById(1L),
                         mockItemService.findItemById(1L, 1L))).collect(Collectors.toList());
 
         List<BookingDto> bookingDtoList1 = bookingService
-                .findAllBookingByUser(1L, "CURRENT", null, null);
+                .findAllBookingByUser(1L, "CURRENT", 0, 10);
 
         Assertions.assertEquals(bookingDtoList, bookingDtoList1);
     }
@@ -394,11 +393,11 @@ public class BookingServiceTest {
                 Status.REJECTED, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
         Mockito.when(mockBookingRepository
-                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
+                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(bookings);
 
         BookingException bookingException = Assertions.assertThrows(BookingException.class,
-                () -> bookingService.findAllBookingByUser(1L, "привет", null, null));
+                () -> bookingService.findAllBookingByUser(1L, "привет", 0, 10));
 
         Assertions.assertEquals("Unknown state: привет", bookingException.getMessage());
     }
@@ -429,50 +428,6 @@ public class BookingServiceTest {
     }
 
     @Test
-    void testSizeErrorFindAllBookingByUser() {
-        Booking booking1 = new Booking(1L, LocalDateTime.of(2023, 11, 12, 10, 25),
-                LocalDateTime.of(2024, 11, 12, 10, 25),
-                Status.WAITING, 2L, 1L);
-        Booking booking2 = new Booking(2L, LocalDateTime.of(2017, 11, 12, 10, 25),
-                LocalDateTime.of(2018, 11, 12, 10, 25),
-                Status.WAITING, 2L, 1L);
-        Booking booking3 = new Booking(3L, LocalDateTime.of(2015, 11, 12, 10, 25),
-                LocalDateTime.of(2016, 11, 12, 10, 25),
-                Status.WAITING, 2L, 1L);
-        List<Booking> bookings = List.of(booking1, booking2, booking3);
-        Mockito.when(mockBookingRepository
-                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), Mockito.any(Pageable.class)))
-                .thenReturn(bookings);
-
-        BookingException bookingException = Assertions.assertThrows(BookingException.class,
-                () -> bookingService.findAllBookingByUser(1L, "ALL", 1, 0));
-
-        Assertions.assertEquals("Размер страницы 0", bookingException.getMessage());
-    }
-
-    @Test
-    void testIndexErrorFindAllBookingByUser() {
-        Booking booking1 = new Booking(1L, LocalDateTime.of(2023, 11, 12, 10, 25),
-                LocalDateTime.of(2024, 11, 12, 10, 25),
-                Status.WAITING, 2L, 1L);
-        Booking booking2 = new Booking(2L, LocalDateTime.of(2017, 11, 12, 10, 25),
-                LocalDateTime.of(2018, 11, 12, 10, 25),
-                Status.WAITING, 2L, 1L);
-        Booking booking3 = new Booking(3L, LocalDateTime.of(2015, 11, 12, 10, 25),
-                LocalDateTime.of(2016, 11, 12, 10, 25),
-                Status.WAITING, 2L, 1L);
-        List<Booking> bookings = List.of(booking1, booking2, booking3);
-        Mockito.when(mockBookingRepository
-                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), Mockito.any(Pageable.class)))
-                .thenReturn(bookings);
-
-        BookingException bookingException = Assertions.assertThrows(BookingException.class,
-                () -> bookingService.findAllBookingByUser(1L, "ALL", -1, 1));
-
-        Assertions.assertEquals("Индекс первого эллемента меньше нуля", bookingException.getMessage());
-    }
-
-    @Test
     void testOkFindAllBookingByUserByOwnerStateAll() {
         Mockito.when(mockItemService.findAllItem(Mockito.anyLong(), Mockito.any(), Mockito.any()))
                 .thenReturn(List.of(new ItemDto(1L, "Дрель", "Простая дрель",
@@ -487,14 +442,14 @@ public class BookingServiceTest {
                 LocalDateTime.of(2016, 11, 12, 10, 25),
                 Status.WAITING, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
-        Mockito.when(mockBookingRepository.findAllByItemId(Mockito.anyLong()))
+        Mockito.when(mockBookingRepository.findAll())
                 .thenReturn(bookings);
         List<BookingDto> bookingDtoList = bookings.stream().map(booking -> BookingMapper.toBookingDto(booking,
                         mockUserService.findUserById(1L), mockItemService.findItemById(1L, 1L)))
                 .collect(Collectors.toList());
 
         List<BookingDto> bookingDtoList1 =
-                bookingService.findAllBookingByOwner(1L, "ALL", null, null);
+                bookingService.findAllBookingByOwner(1L, "ALL", 0, 10);
 
         Assertions.assertEquals(bookingDtoList, bookingDtoList1);
     }
@@ -515,39 +470,16 @@ public class BookingServiceTest {
                 Status.WAITING, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
         Mockito.when(mockBookingRepository
-                        .findAllByItemIdOrderByStartDesc(Mockito.anyLong(), Mockito.any(Pageable.class)))
+                        .findAll())
                 .thenReturn(bookings);
         List<BookingDto> bookingDtoList = bookings.stream().map(booking -> BookingMapper.toBookingDto(booking,
                         mockUserService.findUserById(1L), mockItemService.findItemById(1L, 1L)))
                 .collect(Collectors.toList());
 
         List<BookingDto> bookingDtoList1 =
-                bookingService.findAllBookingByOwner(1L, "ALL", 1, 1);
+                bookingService.findAllBookingByOwner(1L, "ALL", 0, 10);
 
         Assertions.assertEquals(bookingDtoList, bookingDtoList1);
     }
 
-    @Test
-    void tesSizeErrorFindAllBookingByUserByOwner() {
-        Mockito.when(mockItemService.findAllItem(Mockito.anyLong(), Mockito.any(), Mockito.any()))
-                .thenReturn(List.of(new ItemDto(1L, "Дрель", "Простая дрель",
-                        true, null, null, Collections.emptyList(), null)));
-
-        BookingException bookingException = Assertions.assertThrows(BookingException.class,
-                () -> bookingService.findAllBookingByOwner(1L, "ALL", 1, 0));
-
-        Assertions.assertEquals("Размер страницы 0", bookingException.getMessage());
-    }
-
-    @Test
-    void tesIndexErrorFindAllBookingByUserByOwner() {
-        Mockito.when(mockItemService.findAllItem(Mockito.anyLong(), Mockito.any(), Mockito.any()))
-                .thenReturn(List.of(new ItemDto(1L, "Дрель", "Простая дрель",
-                        true, null, null, Collections.emptyList(), null)));
-
-        BookingException bookingException = Assertions.assertThrows(BookingException.class,
-                () -> bookingService.findAllBookingByOwner(1L, "ALL", -1, 1));
-
-        Assertions.assertEquals("Индекс первого эллемента меньше нуля", bookingException.getMessage());
-    }
 }

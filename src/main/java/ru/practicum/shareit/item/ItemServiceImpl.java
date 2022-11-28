@@ -35,8 +35,8 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> findAllItem(long userId, Integer from, Integer size) {
         userService.findUserById(userId);
         PaginationValidation.doValidation(from, size);
-            Pageable pageable = PageRequest.of(((from) / size), size);
-         List<Item> items = itemRepository.findAllByOwnerId(userId, pageable);
+        Pageable pageable = PageRequest.of(((from) / size), size);
+        List<Item> items = itemRepository.findAllByOwnerId(userId, pageable);
         List<ItemDto> itemDtos = new ArrayList<>();
         Map<Long, List<Comment>> comments =
                 commentRepository.findAll().stream().collect(Collectors.groupingBy(Comment::getItemId));
@@ -45,7 +45,7 @@ public class ItemServiceImpl implements ItemService {
         List<UserDto> userList =
                 userRepository.findAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
         Map<Long, UserDto> users = new HashMap<>();
-        for(UserDto userDto: userList){
+        for (UserDto userDto : userList) {
             users.put(userDto.getId(), userDto);
         }
         for (Item item : items) {
@@ -53,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
             if (bookings.containsKey(item.getId())) {
                 addBooking(itemDto, bookings.get(item.getId()));
             }
-            if(comments.containsKey(item.getId())){
+            if (comments.containsKey(item.getId())) {
                 List<CommentDto> commentDtoList = comments.get(item.getId()).stream()
                         .map(comment -> CommentMapper.toCommentDto(comment,
                                 users.get(comment.getAuthorId()))).collect(Collectors.toList());
@@ -138,9 +138,9 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         } else {
             PaginationValidation.doValidation(from, size);
-                Pageable pageable = PageRequest.of(((from) / size), size);
-                return itemRepository.search(text, pageable).stream().map(ItemMapper::toItemDto)
-                        .collect(Collectors.toList());
+            Pageable pageable = PageRequest.of(((from) / size), size);
+            return itemRepository.search(text, pageable).stream().map(ItemMapper::toItemDto)
+                    .collect(Collectors.toList());
         }
     }
 

@@ -38,7 +38,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         PaginationValidation.doValidation(from, size);
         userService.findUserById(ownerId);
         Map<Long, List<ItemDto>> items = itemRepository.findAll().stream().map(ItemMapper::toItemDto)
-                .collect(Collectors.groupingBy(ItemDto::getRequestId));
+                .collect(Collectors.groupingBy(itemDto -> itemDto.getRequestId() == null ? 0 : itemDto.getRequestId()));
         List<ItemRequestDto> itemRequestDtos = itemRequestRepository
                 .findAllByRequestorIdOrderByCreatedDesc(ownerId, PageRequest.of(((from) / size), size)).stream()
                 .map(ItemRequestMapper::toItemRequestDto).collect(Collectors.toList());
@@ -52,7 +52,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         userService.findUserById(userId);
         PaginationValidation.doValidation(from, size);
         Map<Long, List<ItemDto>> items = itemRepository.findAll().stream().map(ItemMapper::toItemDto)
-                .collect(Collectors.groupingBy(ItemDto::getRequestId));
+                .collect(Collectors.groupingBy(itemDto -> itemDto.getRequestId() == null ? 0 : itemDto.getRequestId()));
         Pageable pageable = PageRequest.of(((from) / size), size,
                 Sort.by("created").descending());
         List<ItemRequestDto> itemRequestDtos = itemRequestRepository.findAll(pageable).stream()

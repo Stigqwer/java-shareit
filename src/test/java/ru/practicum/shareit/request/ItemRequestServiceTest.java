@@ -8,9 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -66,7 +64,7 @@ public class ItemRequestServiceTest {
         ItemRequest itemRequest = new ItemRequest(1L, "Хотел бы воспользоваться щёткой для обуви",
                 1L, LocalDateTime.of(2024, 11, 12, 10, 25));
         Mockito.when(mockItemRequestRepository
-                        .findAllByRequestorIdOrderByCreatedDesc(Mockito.anyLong(), PageRequest.of(0,10)))
+                        .findAllByRequestorIdOrderByCreatedDesc(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(List.of(itemRequest));
         ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest);
         itemRequestDto.setItems(Collections.emptyList());
@@ -80,12 +78,12 @@ public class ItemRequestServiceTest {
     void testOkFindAllItemRequest() {
         ItemRequest itemRequest = new ItemRequest(1L, "Хотел бы воспользоваться щёткой для обуви",
                 2L, LocalDateTime.of(2024, 11, 12, 10, 25));
-        Mockito.when(mockItemRequestRepository.findAll(Mockito.any(Sort.class)))
-                .thenReturn(List.of(itemRequest));
+        Mockito.when(mockItemRequestRepository.findAll(Mockito.any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(itemRequest)));
         ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest);
         itemRequestDto.setItems(Collections.emptyList());
 
-        List<ItemRequestDto> itemRequestDtos = itemRequestService.findAllItemRequest(1L, null, null);
+        List<ItemRequestDto> itemRequestDtos = itemRequestService.findAllItemRequest(1L, 0, 10);
 
         Assertions.assertEquals(List.of(itemRequestDto), itemRequestDtos);
     }
@@ -102,22 +100,6 @@ public class ItemRequestServiceTest {
         List<ItemRequestDto> itemRequestDtos = itemRequestService.findAllItemRequest(1L, 1, 1);
 
         Assertions.assertEquals(List.of(itemRequestDto), itemRequestDtos);
-    }
-
-    @Test
-    void testSizeErrorFindAllItemRequest() {
-        ItemRequestException itemRequestException = Assertions.assertThrows(ItemRequestException.class,
-                () -> itemRequestService.findAllItemRequest(1L, 1, 0));
-
-        Assertions.assertEquals("Размер страницы 0", itemRequestException.getMessage());
-    }
-
-    @Test
-    void testIndexErrorFindAllItemRequest() {
-        ItemRequestException itemRequestException = Assertions.assertThrows(ItemRequestException.class,
-                () -> itemRequestService.findAllItemRequest(1L, -1, 1));
-
-        Assertions.assertEquals("Индекс первого эллемента меньше нуля", itemRequestException.getMessage());
     }
 
     @Test

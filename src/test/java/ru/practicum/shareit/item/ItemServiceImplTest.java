@@ -121,7 +121,7 @@ public class ItemServiceImplTest {
         em.flush();
 
         List<ItemDto> targetItemRequests =
-                itemService.findAllItem(userDto.getId(), null, null);
+                itemService.findAllItem(userDto.getId(), 0, 10);
 
         for (ItemDto sourceItem : sourceItems) {
             assertThat(targetItemRequests, hasItem(allOf(
@@ -177,7 +177,7 @@ public class ItemServiceImplTest {
         em.flush();
 
         List<ItemDto> targetItemRequests =
-                itemService.searchItem(userDto.getId(), "Дрель", null, null);
+                itemService.searchItem(userDto.getId(), "Дрель", 0, 10);
 
         for (ItemDto sourceItem : sourceItems) {
             assertThat(targetItemRequests, hasItem(allOf(

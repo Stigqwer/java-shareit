@@ -7,6 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
@@ -26,9 +28,9 @@ public class UserServiceTest {
 
     @Test
     void testOkFindAllUser() {
-        Mockito.when(mockUserRepository.findAll())
-                .thenReturn(List.of(new User(1L, "update", "update@user.com"),
-                        new User(2L, "user", "user@user.com")));
+        Mockito.when(mockUserRepository.findAll(Mockito.any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(List.of(new User(1L, "update", "update@user.com"),
+                        new User(2L, "user", "user@user.com"))));
 
         List<UserDto> userDtoList = userService.findAllUser(0,10);
 

@@ -11,10 +11,7 @@ import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.validation.PaginationValidation;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -68,7 +65,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto findBookingById(long userId, long bookingId) {
         Booking booking = findById(bookingId);
-        boolean isUserItem = itemService.findAllItem(userId, null, null).stream()
+        boolean isUserItem = itemService.findAllItem(userId, 0, 100).stream()
                 .anyMatch(item -> Objects.equals(booking.getItemId(), item.getId()));
         if (isUserItem || Objects.equals(userId, booking.getBookerId())) {
             return BookingMapper.toBookingDto(booking,
@@ -83,9 +80,9 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> findAllBookingByUser(long bookerId, String state, Integer from, Integer size) {
         userService.findUserById(bookerId);
-        PaginationValidation.doValidation(from,size);
-            Pageable pageable = PageRequest.of(((from) / size), size);
-         List<Booking> bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId, pageable);
+        PaginationValidation.doValidation(from, size);
+        Pageable pageable = PageRequest.of(((from) / size), size);
+        List<Booking> bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId, pageable);
         bookingList = getBookingByState(state, bookingList);
         return bookingList.stream().map(booking -> BookingMapper.toBookingDto(booking,
                 userService.findUserById(bookerId),
@@ -127,13 +124,14 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> findAllBookingByOwner(long ownerId, String state, Integer from, Integer size) {
         userService.findUserById(ownerId);
-        List<Long> itemId = itemService.findAllItem(ownerId, null, null)
+        PaginationValidation.doValidation(from, size);
+        List<Long> itemId = itemService.findAllItem(ownerId, 0, 100)
                 .stream().map(ItemDto::getId).collect(Collectors.toList());
         List<Booking> bookingList = new ArrayList<>();
+        Map<Long, List<Booking>> bookings =
+                bookingRepository.findAll().stream().collect(Collectors.groupingBy(Booking::getItemId));
         for (Long id : itemId) {
-            PaginationValidation.doValidation(from, size);
-                Pageable pageable = PageRequest.of(((from) / size), size);
-                bookingList.addAll(bookingRepository.findAllByItemIdOrderByStartDesc(id, pageable));
+            bookingList.addAll(bookings.getOrDefault(id, Collections.emptyList()));
         }
         bookingList = bookingList.stream().sorted((booking1, booking2)
                 -> {
@@ -147,6 +145,7 @@ public class BookingServiceImpl implements BookingService {
         }).collect(Collectors.toList());
 
         bookingList = getBookingByState(state, bookingList);
+        bookingList = bookingList.stream().skip(from).limit(size).collect(Collectors.toList());
         return bookingList.stream().map(booking -> BookingMapper.toBookingDto(booking,
                 userService.findUserById(booking.getBookerId()),
                 itemService.findItemById(booking.getBookerId(), booking.getItemId()))).collect(Collectors.toList());

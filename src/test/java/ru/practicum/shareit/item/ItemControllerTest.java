@@ -84,20 +84,6 @@ public class ItemControllerTest {
     }
 
     @Test
-    void itemException() throws Exception {
-        when(itemService.findItemById(anyLong(), anyLong()))
-                .thenThrow(ItemException.class);
-
-        mvc.perform(get("/items/{itemId}", 1)
-                        .header("X-Sharer-User-Id", 1)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().is(400));
-    }
-
-    @Test
     void createItem() throws Exception {
         ItemDto itemDto = new ItemDto(1L, "Дрель",
                 "Простая дрель", true, null, null, null, null);
