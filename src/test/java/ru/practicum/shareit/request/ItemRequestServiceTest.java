@@ -69,7 +69,7 @@ public class ItemRequestServiceTest {
         ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest);
         itemRequestDto.setItems(Collections.emptyList());
 
-        List<ItemRequestDto> itemRequestDto1 = itemRequestService.findAllItemRequestByOwner(1L, 0 ,10);
+        List<ItemRequestDto> itemRequestDto1 = itemRequestService.findAllItemRequestByOwner(1L, 0,10);
 
         Assertions.assertEquals(List.of(itemRequestDto), itemRequestDto1);
     }
