@@ -8,13 +8,7 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    List<Item> findAllByOwnerId(Long id);
-
     List<Item> findAllByOwnerId(Long id, Pageable pageable);
-
-    @Query("select i from Item i where (LOWER(i.name) like LOWER(concat('%', ?1, '%'))" +
-            " or LOWER(i.description) like lower(concat('%', ?1, '%'))) and i.available = true ")
-    List<Item> search(String text);
 
     List<Item> findAllByRequestId(Long requestId);
 

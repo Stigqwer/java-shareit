@@ -99,7 +99,7 @@ public class UserControllerTest {
     @Test
     void findAllUser() throws Exception {
         List<UserDto> userDtoList = List.of(new UserDto(1L, "update", "update@user.com"));
-        when(userService.findAllUser())
+        when(userService.findAllUser(0,10))
                 .thenReturn(userDtoList);
         UserDto userDto = userDtoList.get(0);
 

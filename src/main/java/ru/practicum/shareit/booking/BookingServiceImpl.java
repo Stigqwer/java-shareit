@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.validation.PaginationValidation;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto createBooking(long userId, Booking booking) {
         ItemDto itemDto = itemService.findItemById(userId, booking.getItemId());
-        boolean isUserItem = itemService.findAllItem(userId, null, null).stream()
+        boolean isUserItem = itemService.findAllItem(userId, 0, 100).stream()
                 .anyMatch(item -> Objects.equals(booking.getItemId(), item.getId()));
         if (isUserItem) {
             throw new BookingNotFoundException("Вы являетесь владельцем данной вещи");
@@ -47,7 +48,7 @@ public class BookingServiceImpl implements BookingService {
         if (booking.getStatus().equals(Status.APPROVED) && approved) {
             throw new BookingException("Статус бронирования уже подтвержден");
         }
-        boolean isUserItem = itemService.findAllItem(userId, null, null).stream()
+        boolean isUserItem = itemService.findAllItem(userId, 0, 100).stream()
                 .anyMatch(item -> Objects.equals(booking.getItemId(), item.getId()));
         if (isUserItem) {
             if (approved) {
@@ -82,19 +83,9 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> findAllBookingByUser(long bookerId, String state, Integer from, Integer size) {
         userService.findUserById(bookerId);
-        List<Booking> bookingList;
-        if (from == null || size == null) {
-            bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId);
-        } else {
-            if (size <= 0) {
-                throw new BookingException(String.format("Размер страницы %s", size));
-            } else if (from < 0) {
-                throw new BookingException("Индекс первого эллемента меньше нуля");
-            } else {
-                Pageable pageable = PageRequest.of(((from) / size), size);
-                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId, pageable);
-            }
-        }
+        PaginationValidation.doValidation(from,size);
+            Pageable pageable = PageRequest.of(((from) / size), size);
+         List<Booking> bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId, pageable);
         bookingList = getBookingByState(state, bookingList);
         return bookingList.stream().map(booking -> BookingMapper.toBookingDto(booking,
                 userService.findUserById(bookerId),
@@ -140,18 +131,9 @@ public class BookingServiceImpl implements BookingService {
                 .stream().map(ItemDto::getId).collect(Collectors.toList());
         List<Booking> bookingList = new ArrayList<>();
         for (Long id : itemId) {
-            if (from == null || size == null) {
-                bookingList.addAll(bookingRepository.findAllByItemId(id));
-            } else {
-                if (size <= 0) {
-                    throw new BookingException(String.format("Размер страницы %s", size));
-                } else if (from < 0) {
-                    throw new BookingException("Индекс первого эллемента меньше нуля");
-                } else {
-                    Pageable pageable = PageRequest.of(((from) / size), size);
-                    bookingList.addAll(bookingRepository.findAllByItemIdOrderByStartDesc(id, pageable));
-                }
-            }
+            PaginationValidation.doValidation(from, size);
+                Pageable pageable = PageRequest.of(((from) / size), size);
+                bookingList.addAll(bookingRepository.findAllByItemIdOrderByStartDesc(id, pageable));
         }
         bookingList = bookingList.stream().sorted((booking1, booking2)
                 -> {

@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -17,6 +18,7 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
 
@@ -41,12 +43,15 @@ public class ItemServiceTest {
     @Mock
     ItemRepository mockItemRepository;
 
+    @Mock
+    UserRepository userRepository;
+
     ItemService itemService;
 
     @BeforeEach
     void beforeEach() {
         itemService = new ItemServiceImpl(mockCommentRepository,
-                mockBookingRepository, mockUserService, mockItemRepository);
+                mockBookingRepository, mockUserService, mockItemRepository, userRepository);
         Mockito.when(mockUserService.findUserById(Mockito.anyLong()))
                 .thenReturn(new UserDto(1L, "update", "update@user.com"));
     }
@@ -58,7 +63,7 @@ public class ItemServiceTest {
                 true, 1L, null);
         Item item3 = new Item(3L, "Клей момент",
                 "Тюбик суперклея марки Момент", true, 1L, null);
-        Mockito.when(mockItemRepository.findAllByOwnerId(Mockito.anyLong()))
+        Mockito.when(mockItemRepository.findAllByOwnerId(Mockito.anyLong(), PageRequest.of(0,10)))
                 .thenReturn(List.of(item1, item2, item3));
         List<ItemDto> itemDtoList1 = List.of(ItemMapper.toItemDto(item1),
                 ItemMapper.toItemDto(item2), ItemMapper.toItemDto(item3));
@@ -96,7 +101,8 @@ public class ItemServiceTest {
                 Status.WAITING, 2L, 1L);
         Mockito.when(mockItemRepository.findAllByOwnerId(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(List.of(item1));
-        Mockito.when(mockBookingRepository.findAllByItemIdOrderByStartDesc(Mockito.anyLong()))
+        Mockito.when(mockBookingRepository
+                        .findAllByItemIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
                 .thenReturn(List.of(booking1, booking2, booking3));
         List<ItemDto> itemDtoList1 = List.of(ItemMapper.toItemDto(item1));
         itemDtoList1.forEach(itemDto -> itemDto.setComments(Collections.emptyList()));
@@ -166,7 +172,8 @@ public class ItemServiceTest {
         itemDto.setNextBooking(booking1);
         Mockito.when(mockItemRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.of(item1));
-        Mockito.when(mockBookingRepository.findAllByItemIdOrderByStartDesc(Mockito.anyLong()))
+        Mockito.when(mockBookingRepository
+                        .findAllByItemIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
                 .thenReturn(List.of(booking1, booking2, booking3));
 
         ItemDto itemDto1 = itemService.findItemById(1L, 1L);
@@ -235,7 +242,7 @@ public class ItemServiceTest {
     void testOkSearch() {
         Item item1 = new Item(1L, "Дрель",
                 "Простая дрель", true, 2L, null);
-        Mockito.when(mockItemRepository.search(Mockito.anyString()))
+        Mockito.when(mockItemRepository.search(Mockito.anyString(), PageRequest.of(0,10)))
                 .thenReturn(List.of(item1));
 
         List<ItemDto> itemDtoList = itemService.searchItem(1L, "ДРЕЛЬ", null, null);

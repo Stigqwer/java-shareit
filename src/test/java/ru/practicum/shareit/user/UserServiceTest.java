@@ -30,7 +30,7 @@ public class UserServiceTest {
                 .thenReturn(List.of(new User(1L, "update", "update@user.com"),
                         new User(2L, "user", "user@user.com")));
 
-        List<UserDto> userDtoList = userService.findAllUser();
+        List<UserDto> userDtoList = userService.findAllUser(0,10);
 
         Assertions.assertEquals(List.of(new UserDto(1L, "update", "update@user.com"),
                 new UserDto(2L, "user", "user@user.com")), userDtoList);

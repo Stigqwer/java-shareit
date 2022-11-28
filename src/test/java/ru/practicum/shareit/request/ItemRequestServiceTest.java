@@ -8,8 +8,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.UserService;
@@ -32,11 +34,15 @@ public class ItemRequestServiceTest {
     @Mock
     ItemRequestRepository mockItemRequestRepository;
 
+    @Mock
+    ItemRepository mockItemRepository;
+
     ItemRequestService itemRequestService;
 
     @BeforeEach
     void beforeEach() {
-        itemRequestService = new ItemRequestServiceImpl(mockUserService, mockItemService, mockItemRequestRepository);
+        itemRequestService = new ItemRequestServiceImpl(mockUserService, mockItemService, mockItemRequestRepository,
+                mockItemRepository);
         Mockito.when(mockUserService.findUserById(Mockito.anyLong()))
                 .thenReturn(new UserDto(1L, "update", "update@user.com"));
     }
@@ -59,12 +65,13 @@ public class ItemRequestServiceTest {
     void testOkFindAllItemRequestByOwner() {
         ItemRequest itemRequest = new ItemRequest(1L, "Хотел бы воспользоваться щёткой для обуви",
                 1L, LocalDateTime.of(2024, 11, 12, 10, 25));
-        Mockito.when(mockItemRequestRepository.findAllByRequestorIdOrderByCreatedDesc(Mockito.anyLong()))
+        Mockito.when(mockItemRequestRepository
+                        .findAllByRequestorIdOrderByCreatedDesc(Mockito.anyLong(), PageRequest.of(0,10)))
                 .thenReturn(List.of(itemRequest));
         ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest);
         itemRequestDto.setItems(Collections.emptyList());
 
-        List<ItemRequestDto> itemRequestDto1 = itemRequestService.findAllItemRequestByOwner(1L);
+        List<ItemRequestDto> itemRequestDto1 = itemRequestService.findAllItemRequestByOwner(1L, 0 ,10);
 
         Assertions.assertEquals(List.of(itemRequestDto), itemRequestDto1);
     }

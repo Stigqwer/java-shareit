@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.ItemService;
@@ -242,7 +243,8 @@ public class BookingServiceTest {
                 LocalDateTime.of(2016, 11, 12, 10, 25),
                 Status.WAITING, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
-        Mockito.when(mockBookingRepository.findAllByBookerIdOrderByStartDesc(Mockito.anyLong()))
+        Mockito.when(mockBookingRepository
+                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
                 .thenReturn(bookings);
         List<BookingDto> bookingDtoList = bookings.stream()
                 .map(booking -> BookingMapper.toBookingDto(booking, mockUserService.findUserById(1L),
@@ -266,7 +268,8 @@ public class BookingServiceTest {
                 LocalDateTime.of(2016, 11, 12, 10, 25),
                 Status.REJECTED, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
-        Mockito.when(mockBookingRepository.findAllByBookerIdOrderByStartDesc(Mockito.anyLong()))
+        Mockito.when(mockBookingRepository
+                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(),PageRequest.of(0, 10)))
                 .thenReturn(bookings);
         List<BookingDto> bookingDtoList = Stream.of(booking1, booking2)
                 .map(booking -> BookingMapper.toBookingDto(booking, mockUserService.findUserById(1L),
@@ -290,7 +293,8 @@ public class BookingServiceTest {
                 LocalDateTime.of(2016, 11, 12, 10, 25),
                 Status.REJECTED, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
-        Mockito.when(mockBookingRepository.findAllByBookerIdOrderByStartDesc(Mockito.anyLong()))
+        Mockito.when(mockBookingRepository
+                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
                 .thenReturn(bookings);
         List<BookingDto> bookingDtoList = Stream.of(booking3)
                 .map(booking -> BookingMapper.toBookingDto(booking, mockUserService.findUserById(1L),
@@ -314,7 +318,8 @@ public class BookingServiceTest {
                 LocalDateTime.of(2016, 11, 12, 10, 25),
                 Status.REJECTED, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
-        Mockito.when(mockBookingRepository.findAllByBookerIdOrderByStartDesc(Mockito.anyLong()))
+        Mockito.when(mockBookingRepository
+                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
                 .thenReturn(bookings);
         List<BookingDto> bookingDtoList = Stream.of(booking1)
                 .map(booking -> BookingMapper.toBookingDto(booking, mockUserService.findUserById(1L),
@@ -338,7 +343,8 @@ public class BookingServiceTest {
                 LocalDateTime.of(2016, 11, 12, 10, 25),
                 Status.REJECTED, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
-        Mockito.when(mockBookingRepository.findAllByBookerIdOrderByStartDesc(Mockito.anyLong()))
+        Mockito.when(mockBookingRepository
+                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
                 .thenReturn(bookings);
         List<BookingDto> bookingDtoList = Stream.of(booking2, booking3)
                 .map(booking -> BookingMapper.toBookingDto(booking, mockUserService.findUserById(1L),
@@ -362,7 +368,8 @@ public class BookingServiceTest {
                 LocalDateTime.of(2016, 11, 12, 10, 25),
                 Status.REJECTED, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
-        Mockito.when(mockBookingRepository.findAllByBookerIdOrderByStartDesc(Mockito.anyLong()))
+        Mockito.when(mockBookingRepository
+                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
                 .thenReturn(bookings);
         List<BookingDto> bookingDtoList = Stream.of(booking2)
                 .map(booking -> BookingMapper.toBookingDto(booking, mockUserService.findUserById(1L),
@@ -386,7 +393,8 @@ public class BookingServiceTest {
                 LocalDateTime.of(2016, 11, 12, 10, 25),
                 Status.REJECTED, 2L, 1L);
         List<Booking> bookings = List.of(booking1, booking2, booking3);
-        Mockito.when(mockBookingRepository.findAllByBookerIdOrderByStartDesc(Mockito.anyLong()))
+        Mockito.when(mockBookingRepository
+                        .findAllByBookerIdOrderByStartDesc(Mockito.anyLong(), PageRequest.of(0,10)))
                 .thenReturn(bookings);
 
         BookingException bookingException = Assertions.assertThrows(BookingException.class,

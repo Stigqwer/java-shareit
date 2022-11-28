@@ -75,7 +75,7 @@ public class UserServiceImplTest {
         }
         em.flush();
 
-        List<UserDto> targetUsers = service.findAllUser();
+        List<UserDto> targetUsers = service.findAllUser(0,10);
 
         assertThat(targetUsers, hasSize(sourceUsers.size()));
         for (UserDto sourceUser : sourceUsers) {
@@ -99,10 +99,10 @@ public class UserServiceImplTest {
         }
         em.flush();
 
-        List<UserDto> targetUsers = service.findAllUser();
+        List<UserDto> targetUsers = service.findAllUser(0,10);
         service.deleteUser(targetUsers.get(0).getId());
 
-        UserDto userDto = service.findAllUser().get(0);
+        UserDto userDto = service.findAllUser(0,10).get(0);
         assertThat(userDto.getId(), notNullValue());
         assertThat(userDto.getName(), equalTo(sourceUsers.get(1).getName()));
         assertThat(userDto.getEmail(), equalTo(sourceUsers.get(1).getEmail()));

@@ -5,13 +5,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.ItemService;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.validation.PaginationValidation;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +23,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     private final ItemService itemService;
     private final ItemRequestRepository itemRequestRepository;
+    private final ItemRepository itemRepository;
 
     @Override
     public ItemRequestDto createItemRequest(ItemRequestDto itemRequestDto, Long requestorId) {
@@ -31,42 +34,33 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestDto> findAllItemRequestByOwner(Long ownerId) {
+    public List<ItemRequestDto> findAllItemRequestByOwner(Long ownerId, Integer from, Integer size) {
+        PaginationValidation.doValidation(from, size);
         userService.findUserById(ownerId);
+        Map<Long, List<ItemDto>> items = itemRepository.findAll().stream().map(ItemMapper::toItemDto)
+                .collect(Collectors.groupingBy(ItemDto::getRequestId));
         List<ItemRequestDto> itemRequestDtos = itemRequestRepository
-                .findAllByRequestorIdOrderByCreatedDesc(ownerId).stream()
+                .findAllByRequestorIdOrderByCreatedDesc(ownerId, PageRequest.of(((from) / size), size)).stream()
                 .map(ItemRequestMapper::toItemRequestDto).collect(Collectors.toList());
-        itemRequestDtos.forEach(itemRequestDto
-                -> itemRequestDto.setItems(itemService.findAllByRequestId(itemRequestDto.getId())));
+        itemRequestDtos.forEach(itemRequestDto -> itemRequestDto
+                .setItems(items.getOrDefault(itemRequestDto.getId(), Collections.emptyList())));
         return itemRequestDtos;
     }
 
     @Override
     public List<ItemRequestDto> findAllItemRequest(Long userId, Integer from, Integer size) {
         userService.findUserById(userId);
-        if (from == null || size == null) {
-            List<ItemRequestDto> itemRequestDtos = itemRequestRepository.findAll(Sort.by("created")
-                            .descending()).stream().filter(itemRequest -> !Objects.equals(itemRequest.getRequestorId(), userId))
-                    .map(ItemRequestMapper::toItemRequestDto).collect(Collectors.toList());
-            itemRequestDtos.forEach(itemRequestDto
-                    -> itemRequestDto.setItems(itemService.findAllByRequestId(itemRequestDto.getId())));
-            return itemRequestDtos;
-        } else {
-            if (size <= 0) {
-                throw new ItemRequestException(String.format("Размер страницы %s", size));
-            } else if (from < 0) {
-                throw new ItemRequestException("Индекс первого эллемента меньше нуля");
-            } else {
-                Pageable pageable = PageRequest.of(((from) / size), size,
-                        Sort.by("created").descending());
-                List<ItemRequestDto> itemRequestDtos = itemRequestRepository.findAll(pageable).stream()
-                        .filter(itemRequest -> !Objects.equals(itemRequest.getRequestorId(), userId))
-                        .map(ItemRequestMapper::toItemRequestDto).collect(Collectors.toList());
-                itemRequestDtos.forEach(itemRequestDto
-                        -> itemRequestDto.setItems(itemService.findAllByRequestId(itemRequestDto.getId())));
-                return itemRequestDtos;
-            }
-        }
+        PaginationValidation.doValidation(from, size);
+        Map<Long, List<ItemDto>> items = itemRepository.findAll().stream().map(ItemMapper::toItemDto)
+                .collect(Collectors.groupingBy(ItemDto::getRequestId));
+        Pageable pageable = PageRequest.of(((from) / size), size,
+                Sort.by("created").descending());
+        List<ItemRequestDto> itemRequestDtos = itemRequestRepository.findAll(pageable).stream()
+                .filter(itemRequest -> !Objects.equals(itemRequest.getRequestorId(), userId))
+                .map(ItemRequestMapper::toItemRequestDto).collect(Collectors.toList());
+        itemRequestDtos.forEach(itemRequestDto -> itemRequestDto
+                .setItems(items.getOrDefault(itemRequestDto.getId(), Collections.emptyList())));
+        return itemRequestDtos;
     }
 
     @Override

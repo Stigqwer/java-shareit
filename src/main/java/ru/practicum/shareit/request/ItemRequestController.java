@@ -26,14 +26,16 @@ public class ItemRequestController {
     }
 
     @GetMapping
-    public List<ItemRequestDto> findAllItemRequestByOwner(@RequestHeader("X-Sharer-User-Id") @NotEmpty long userId) {
-        return itemRequestService.findAllItemRequestByOwner(userId);
+    public List<ItemRequestDto> findAllItemRequestByOwner(@RequestHeader("X-Sharer-User-Id") @NotEmpty long userId,
+                                                          @RequestParam(defaultValue = "0") Integer from,
+                                                          @RequestParam(defaultValue = "10") Integer size) {
+        return itemRequestService.findAllItemRequestByOwner(userId, from, size);
     }
 
     @GetMapping("/all")
     public List<ItemRequestDto> findAllItemRequest(@RequestHeader("X-Sharer-User-Id") @NotEmpty long userId,
-                                                   @RequestParam(required = false) Integer from,
-                                                   @RequestParam(required = false) Integer size) {
+                                                   @RequestParam(defaultValue = "0") Integer from,
+                                                   @RequestParam(defaultValue = "10") Integer size) {
         return itemRequestService.findAllItemRequest(userId, from, size);
     }
 

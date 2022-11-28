@@ -97,7 +97,7 @@ public class ItemRequestServiceImplTest {
         em.flush();
 
         List<ItemRequestDto> targetItemRequests =
-                itemRequestService.findAllItemRequestByOwner(userDto.getId());
+                itemRequestService.findAllItemRequestByOwner(userDto.getId(), 0, 10);
 
         for (ItemRequestDto sourceItemRequest : sourceItemRequests) {
             assertThat(targetItemRequests, hasItem(allOf(
