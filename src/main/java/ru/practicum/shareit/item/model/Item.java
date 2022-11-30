@@ -25,4 +25,6 @@ public class Item {
     private boolean available;
     @Column(name = "owner_id")
     private Long ownerId;
+    @Column(name = "request_id")
+    private Long requestId;
 }

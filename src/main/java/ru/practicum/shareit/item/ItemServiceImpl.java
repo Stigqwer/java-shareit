@@ -1,20 +1,24 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.validation.PaginationValidation;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,20 +29,36 @@ public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final ItemRepository itemRepository;
 
+    private final UserRepository userRepository;
+
     @Override
-    public List<ItemDto> findAllItem(long userId) {
+    public List<ItemDto> findAllItem(long userId, Integer from, Integer size) {
         userService.findUserById(userId);
-        List<Item> items = itemRepository.findAllByOwnerId(userId);
+        PaginationValidation.doValidation(from, size);
+        Pageable pageable = PageRequest.of(((from) / size), size);
+        List<Item> items = itemRepository.findAllByOwnerId(userId, pageable);
         List<ItemDto> itemDtos = new ArrayList<>();
+        Map<Long, List<Comment>> comments =
+                commentRepository.findAll().stream().collect(Collectors.groupingBy(Comment::getItemId));
+        Map<Long, List<Booking>> bookings = bookingRepository.findAllByStatusOrderByStartDesc(Status.APPROVED).stream()
+                .collect(Collectors.groupingBy(Booking::getItemId));
+        List<UserDto> userList =
+                userRepository.findAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
+        Map<Long, UserDto> users = new HashMap<>();
+        for (UserDto userDto : userList) {
+            users.put(userDto.getId(), userDto);
+        }
         for (Item item : items) {
             ItemDto itemDto = ItemMapper.toItemDto(item);
-            List<Booking> bookings = bookingRepository.findAllByItemIdOrderByStartDesc(item.getId());
-            if (bookings.size() != 0) {
-                addBooking(itemDto, bookings);
+            if (bookings.containsKey(item.getId())) {
+                addBooking(itemDto, bookings.get(item.getId()));
             }
-            itemDto.setComments(commentRepository.findAllByItemId(item.getId()).stream()
-                    .map(comment -> CommentMapper.toCommentDto(comment,
-                            userService.findUserById(comment.getAuthorId()))).collect(Collectors.toList()));
+            if (comments.containsKey(item.getId())) {
+                List<CommentDto> commentDtoList = comments.get(item.getId()).stream()
+                        .map(comment -> CommentMapper.toCommentDto(comment,
+                                users.get(comment.getAuthorId()))).collect(Collectors.toList());
+                itemDto.setComments(commentDtoList);
+            }
             itemDtos.add(itemDto);
         }
         return itemDtos;
@@ -49,13 +69,13 @@ public class ItemServiceImpl implements ItemService {
                 .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
                 .collect(Collectors.toList());
         if (lastBookings.size() != 0) {
-            itemDto.setLastBooking(lastBookings.get(lastBookings.size() - 1));
+            itemDto.setLastBooking(lastBookings.get(0));
         }
         List<Booking> nextBookings = bookings.stream()
                 .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
                 .collect(Collectors.toList());
         if (nextBookings.size() != 0) {
-            itemDto.setNextBooking(nextBookings.get(0));
+            itemDto.setNextBooking(nextBookings.get(nextBookings.size() - 1));
         }
     }
 
@@ -67,7 +87,8 @@ public class ItemServiceImpl implements ItemService {
             Item item = optionalItem.get();
             ItemDto itemDto = ItemMapper.toItemDto(item);
             if (item.getOwnerId().equals(userId)) {
-                List<Booking> bookings = bookingRepository.findAllByItemIdOrderByStartDesc(itemId);
+                List<Booking> bookings =
+                        bookingRepository.findAllByItemIdOrderByStartDesc(itemId);
                 if (bookings.size() != 0) {
                     addBooking(itemDto, bookings);
                 }
@@ -111,12 +132,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItem(long userId, String text) {
+    public List<ItemDto> searchItem(long userId, String text, Integer from, Integer size) {
         userService.findUserById(userId);
         if (text.isEmpty()) {
             return Collections.emptyList();
         } else {
-            return itemRepository.search(text).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+            PaginationValidation.doValidation(from, size);
+            Pageable pageable = PageRequest.of(((from) / size), size);
+            return itemRepository.search(text, pageable).stream().map(ItemMapper::toItemDto)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -132,5 +156,10 @@ public class ItemServiceImpl implements ItemService {
         }
         Comment comment = CommentMapper.toComment(commentDto, itemId, userId);
         return CommentMapper.toCommentDto(commentRepository.save(comment), userService.findUserById(userId));
+    }
+
+    public List<ItemDto> findAllByRequestId(Long requestId) {
+        return itemRepository.findAllByRequestId(requestId).stream()
+                .map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 }
