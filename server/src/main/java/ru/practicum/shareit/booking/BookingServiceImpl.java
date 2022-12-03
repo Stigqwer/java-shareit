@@ -8,7 +8,6 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.validation.PaginationValidation;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -80,7 +79,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> findAllBookingByUser(long bookerId, String state, Integer from, Integer size) {
         userService.findUserById(bookerId);
-        PaginationValidation.doValidation(from, size);
         Pageable pageable = PageRequest.of(((from) / size), size);
         List<Booking> bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId, pageable);
         bookingList = getBookingByState(state, bookingList);
@@ -124,7 +122,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> findAllBookingByOwner(long ownerId, String state, Integer from, Integer size) {
         userService.findUserById(ownerId);
-        PaginationValidation.doValidation(from, size);
         List<Long> itemId = itemService.findAllItem(ownerId, 0, 100)
                 .stream().map(ItemDto::getId).collect(Collectors.toList());
         List<Booking> bookingList = new ArrayList<>();

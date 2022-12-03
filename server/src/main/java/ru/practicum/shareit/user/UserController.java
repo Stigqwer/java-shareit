@@ -16,8 +16,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<UserDto> findAllUser(@RequestParam(defaultValue = "0") Integer from,
-                                     @RequestParam(defaultValue = "10") Integer size) {
+    public List<UserDto> findAllUser(@RequestParam Integer from,
+                                     @RequestParam Integer size) {
         return userService.findAllUser(from, size);
     }
 

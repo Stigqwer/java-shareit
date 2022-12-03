@@ -20,7 +20,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.validation.ValidationException;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -92,22 +91,6 @@ public class ItemServiceTest {
         List<ItemDto> itemDtoList = itemService.findAllItem(1L, 1, 1);
 
         Assertions.assertEquals(itemDtoList1, itemDtoList);
-    }
-
-    @Test
-    void testSizeErrorFindAllItem() {
-        ValidationException validationExceptionn = Assertions.assertThrows(ValidationException.class,
-                () -> itemService.findAllItem(1L, 1, -1));
-
-        Assertions.assertEquals("Размер страницы -1", validationExceptionn.getMessage());
-    }
-
-    @Test
-    void testIndexErrorFindAllItem() {
-        ValidationException validationException = Assertions.assertThrows(ValidationException.class,
-                () -> itemService.findAllItem(1L, -1, 1));
-
-        Assertions.assertEquals("Индекс первого эллемента меньше нуля", validationException.getMessage());
     }
 
     @Test

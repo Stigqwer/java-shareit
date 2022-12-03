@@ -15,7 +15,6 @@ import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.validation.PaginationValidation;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -34,7 +33,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> findAllItem(long userId, Integer from, Integer size) {
         userService.findUserById(userId);
-        PaginationValidation.doValidation(from, size);
         Pageable pageable = PageRequest.of(((from) / size), size);
         List<Item> items = itemRepository.findAllByOwnerId(userId, pageable);
         List<ItemDto> itemDtos = new ArrayList<>();
@@ -137,7 +135,6 @@ public class ItemServiceImpl implements ItemService {
         if (text.isEmpty()) {
             return Collections.emptyList();
         } else {
-            PaginationValidation.doValidation(from, size);
             Pageable pageable = PageRequest.of(((from) / size), size);
             return itemRepository.search(text, pageable).stream().map(ItemMapper::toItemDto)
                     .collect(Collectors.toList());

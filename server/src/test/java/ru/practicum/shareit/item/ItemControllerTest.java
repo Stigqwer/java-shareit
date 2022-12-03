@@ -38,7 +38,7 @@ public class ItemControllerTest {
         when(itemService.findAllItem(anyLong(), any(), any()))
                 .thenReturn(itemDtoList);
 
-        mvc.perform(get("/items")
+        mvc.perform(get("/items?from=0&size=10")
                         .header("X-Sharer-User-Id", 1)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -131,7 +131,7 @@ public class ItemControllerTest {
         when(itemService.searchItem(anyLong(), anyString(), any(), any()))
                 .thenReturn(itemDtoList);
 
-        mvc.perform(get("/items/search").param("text", "text")
+        mvc.perform(get("/items/search?from=0&size=10").param("text", "text")
                         .header("X-Sharer-User-Id", 1)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)

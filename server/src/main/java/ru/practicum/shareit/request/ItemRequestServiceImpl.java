@@ -11,7 +11,6 @@ import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.validation.PaginationValidation;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,7 +34,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> findAllItemRequestByOwner(Long ownerId, Integer from, Integer size) {
-        PaginationValidation.doValidation(from, size);
         userService.findUserById(ownerId);
         Map<Long, List<ItemDto>> items = itemRepository.findAll().stream().map(ItemMapper::toItemDto)
                 .collect(Collectors.groupingBy(itemDto -> itemDto.getRequestId() == null ? 0 : itemDto.getRequestId()));
@@ -50,7 +48,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDto> findAllItemRequest(Long userId, Integer from, Integer size) {
         userService.findUserById(userId);
-        PaginationValidation.doValidation(from, size);
         Map<Long, List<ItemDto>> items = itemRepository.findAll().stream().map(ItemMapper::toItemDto)
                 .collect(Collectors.groupingBy(itemDto -> itemDto.getRequestId() == null ? 0 : itemDto.getRequestId()));
         Pageable pageable = PageRequest.of(((from) / size), size,

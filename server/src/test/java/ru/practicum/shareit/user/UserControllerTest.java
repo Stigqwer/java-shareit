@@ -103,7 +103,7 @@ public class UserControllerTest {
                 .thenReturn(userDtoList);
         UserDto userDto = userDtoList.get(0);
 
-        mvc.perform(get("/users")
+        mvc.perform(get("/users?from=0&size=10")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

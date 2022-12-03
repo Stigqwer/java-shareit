@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.validation.PaginationValidation;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +16,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> findAllUser(Integer from, Integer size) {
-        PaginationValidation.doValidation(from, size);
         return userRepository.findAll(PageRequest.of(((from) / size), size))
                 .stream().map(UserMapper::toUserDto).collect(Collectors.toList());
     }
