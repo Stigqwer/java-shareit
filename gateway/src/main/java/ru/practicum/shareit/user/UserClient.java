@@ -26,7 +26,7 @@ public class UserClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> getUsers(Integer from, Integer size){
+    public ResponseEntity<Object> getUsers(Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
                 "from", from,
                 "size", size
@@ -34,19 +34,19 @@ public class UserClient extends BaseClient {
         return get("?from={from}&size={size}", null, parameters);
     }
 
-    public ResponseEntity<Object> getUser(Long userId){
+    public ResponseEntity<Object> getUser(Long userId) {
         return get("/" + userId);
     }
 
-    public ResponseEntity<Object> createUser(UserDto userDto){
+    public ResponseEntity<Object> createUser(UserDto userDto) {
         return post("", userDto);
     }
 
-    public ResponseEntity<Object> patchUser(Long userId, UserDto userDto){
+    public ResponseEntity<Object> patchUser(Long userId, UserDto userDto) {
         return patch("/" + userId, userDto);
     }
 
-    public ResponseEntity<Object> deleteUser(Long userId){
+    public ResponseEntity<Object> deleteUser(Long userId) {
         return delete("/" + userId);
     }
 }

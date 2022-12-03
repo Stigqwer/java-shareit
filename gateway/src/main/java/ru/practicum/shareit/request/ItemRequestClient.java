@@ -8,7 +8,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 import java.util.Map;
@@ -28,11 +27,11 @@ public class ItemRequestClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> createItemRequest(Long userId, ItemRequestDto itemRequestDto){
+    public ResponseEntity<Object> createItemRequest(Long userId, ItemRequestDto itemRequestDto) {
         return post("", userId, itemRequestDto);
     }
 
-    public ResponseEntity<Object> findAllItemRequestByOwner(Long userId, Integer from, Integer size){
+    public ResponseEntity<Object> findAllItemRequestByOwner(Long userId, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
                 "from", from,
                 "size", size
@@ -40,7 +39,7 @@ public class ItemRequestClient extends BaseClient {
         return get("?from={from}&size={size}", userId, parameters);
     }
 
-    public ResponseEntity<Object> findAllItemRequest(Long userId, Integer from, Integer size){
+    public ResponseEntity<Object> findAllItemRequest(Long userId, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
                 "from", from,
                 "size", size
@@ -48,7 +47,7 @@ public class ItemRequestClient extends BaseClient {
         return get("/all?from={from}&size={size}", userId, parameters);
     }
 
-    public ResponseEntity<Object> findItemRequestById(Long userId, Long itemRequestId){
+    public ResponseEntity<Object> findItemRequestById(Long userId, Long itemRequestId) {
         return get("/" + itemRequestId, userId);
     }
 }
