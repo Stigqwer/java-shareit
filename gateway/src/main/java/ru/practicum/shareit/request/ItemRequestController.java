@@ -6,14 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.ItemClient;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.util.List;
 
 @Controller
 @RequestMapping(path = "/requests")
@@ -21,7 +18,7 @@ import java.util.List;
 @Slf4j
 @Validated
 public class ItemRequestController {
-    private ItemRequestClient itemRequestClient;
+    private final ItemRequestClient itemRequestClient;
 
     @PostMapping
     public ResponseEntity<Object> createItemRequest(@RequestHeader("X-Sharer-User-Id") long userId,

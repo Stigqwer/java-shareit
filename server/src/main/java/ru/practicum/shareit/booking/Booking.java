@@ -23,6 +23,7 @@ public class Booking {
     @Column(name = "end_date")
     private LocalDateTime end;
     @Column
+    @Enumerated(EnumType.STRING)
     private Status status;
     @Column(name = "booker_id")
     private Long bookerId;

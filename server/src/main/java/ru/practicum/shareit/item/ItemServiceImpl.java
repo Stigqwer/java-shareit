@@ -34,7 +34,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> findAllItem(long userId, Integer from, Integer size) {
         userService.findUserById(userId);
         Pageable pageable = PageRequest.of(((from) / size), size);
-        List<Item> items = itemRepository.findAllByOwnerId(userId, pageable);
+        List<Item> items = itemRepository.findAllByOwnerIdOrderById(userId, pageable);
         List<ItemDto> itemDtos = new ArrayList<>();
         Map<Long, List<Comment>> comments =
                 commentRepository.findAll().stream().collect(Collectors.groupingBy(Comment::getItemId));

@@ -58,7 +58,7 @@ public class ItemServiceTest {
     @Test
     void testOkFindAllItem() {
         Item item1 = new Item(1L, "Дрель", "Простая дрель", true, 1L, null);
-        Mockito.when(mockItemRepository.findAllByOwnerId(Mockito.anyLong(), Mockito.any(Pageable.class)))
+        Mockito.when(mockItemRepository.findAllByOwnerIdOrderById(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(List.of(item1));
         List<ItemDto> itemDtoList1 = List.of(ItemMapper.toItemDto(item1));
 
@@ -79,7 +79,7 @@ public class ItemServiceTest {
         Booking booking3 = new Booking(3L, LocalDateTime.of(2015, 11, 12, 10, 25),
                 LocalDateTime.of(2016, 11, 12, 10, 25),
                 Status.WAITING, 2L, 1L);
-        Mockito.when(mockItemRepository.findAllByOwnerId(Mockito.anyLong(), Mockito.any(Pageable.class)))
+        Mockito.when(mockItemRepository.findAllByOwnerIdOrderById(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(List.of(item1));
         Mockito.when(mockBookingRepository
                         .findAllByStatusOrderByStartDesc(Mockito.any()))
